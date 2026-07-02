@@ -1,0 +1,10 @@
+{
+  "/meteo/**": {
+    "target": "https://meteo.arso.gov.si",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/meteo": ""
+    }
+  }
+}
