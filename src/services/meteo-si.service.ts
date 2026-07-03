@@ -1,6 +1,6 @@
 import { inject, Service } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { map, Observable } from "rxjs";
+import { map, Observable, switchMap, timer } from "rxjs";
 
 import { environment } from "../environments/environment";
 
@@ -48,5 +48,13 @@ export class MeteoSiService {
 
   public getRadarImageUrl(path: string): string {
     return `${this.BASE_URL}${path}`;
+  }
+
+
+  public getRadarImage(): Observable<RadarImageInfo[]> {
+    // 5 minutes
+    return timer(0, 5 * 60 * 1000).pipe(
+      switchMap(() => this.getRadarImageInfo()),
+    );
   }
 }

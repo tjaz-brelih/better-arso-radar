@@ -1,1 +1,23 @@
-<div #map class="h-screen"></div>
+<div class="h-screen flex flex-col p-2 gap-2">
+  <div class="flex items-center justify-between">
+    <div>
+      <button appButton (click)="this.refreshRadarImage()">Refresh</button>
+    </div>
+
+    <div class="flex items-center max-w-xl min-w-sm w-full">
+      <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full" />
+
+      <datalist id="markers">
+        @for (_ of this.radarImages(); track _.path) {
+          <option [value]="$index"></option>
+        }
+      </datalist>
+    </div>
+
+    <div>
+
+    </div>
+  </div>
+
+  <div #map class="flex-1 border border-gray-400 rounded-lg"></div>
+</div>
