@@ -26,6 +26,7 @@
             ],
             "styles": [
               "src/styles.css",
+              "node_modules/@fontsource-variable/inter/wght.css",
               "node_modules/leaflet/dist/leaflet.css"
             ]
           },

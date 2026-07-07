@@ -19,5 +19,14 @@
     </div>
   </div>
 
-  <div #map class="flex-1 border border-gray-400 rounded-lg"></div>
+  <div class="flex-1">
+    <div class="absolute left-1/2 transform -translate-x-1/2 w-56 py-2 z-500 flex items-center justify-center text-xl bg-white border border-gray-400 rounded-b-lg">
+      @let date = this.currentRadarImage()?.info?.date;
+
+      @if (date) { {{ date | date: 'd.MM.yyyy HH:mm' }} }
+      @else { / }
+    </div>
+
+    <div #map class="h-full border border-gray-400 rounded-lg"></div>
+  </div>
 </div>

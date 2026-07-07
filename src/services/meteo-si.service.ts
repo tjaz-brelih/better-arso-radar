@@ -1,6 +1,6 @@
 import { inject, Service } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { map, Observable, switchMap, timer } from "rxjs";
+import { concatAll, map, mergeMap, Observable, switchMap, timer } from "rxjs";
 
 import { environment } from "../environments/environment";
 
@@ -17,8 +17,16 @@ export type RadarImageInfo = {
     northEast: [number, number],
     southWest: [number, number]
   ];
-
   date: Date;
+};
+
+export type RadarImage = {
+  imageData: string;
+  date: Date;
+  boundingBox: [
+    northEast: [number, number],
+    southWest: [number, number]
+  ];
 };
 
 
@@ -37,7 +45,7 @@ export class MeteoSiService {
         const split = x.bbox.split(",").map(Number);
 
         return {
-          path: x.path,
+          path: this._getRadarImageUrl(x.path),
           boundingBox: [ [split[2], split[3]], [split[0], split[1]] ],
           date: new Date(x.valid),
         };
@@ -46,15 +54,7 @@ export class MeteoSiService {
   }
 
 
-  public getRadarImageUrl(path: string): string {
+  private _getRadarImageUrl(path: string): string {
     return `${this.BASE_URL}${path}`;
-  }
-
-
-  public getRadarImage(): Observable<RadarImageInfo[]> {
-    // 5 minutes
-    return timer(0, 5 * 60 * 1000).pipe(
-      switchMap(() => this.getRadarImageInfo()),
-    );
   }
 }

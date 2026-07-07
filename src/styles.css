@@ -3,6 +3,10 @@
 @import 'tailwindcss';
 
 
+@theme {
+  --default-font-family: 'Inter Variable';
+}
+
 .radar-image {
   image-rendering: pixelated;
 }
