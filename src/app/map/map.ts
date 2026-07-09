@@ -1,18 +1,17 @@
 import { Component, computed, effect, ElementRef, inject, signal, untracked, viewChild } from "@angular/core";
 import { disabled, form, FormField, max } from "@angular/forms/signals";
 import { DatePipe } from "@angular/common";
-import { Subscription } from "rxjs";
 
 import { ImageOverlay, Map, TileLayer } from "leaflet";
 
-import { MeteoSiService, RadarImageInfo } from "../../services/meteo-si.service";
+import { MeteoSiService, RadarImage } from "../../services/meteo-si.service";
 
 import { SharedModule } from "../shared.module";
 
 
 type CurrentImage = {
   layer: ImageOverlay;
-  info: RadarImageInfo;
+  radarImage: RadarImage;
 };
 
 
@@ -29,20 +28,21 @@ export class MapComponent {
   private readonly _mapElement = viewChild.required<ElementRef<HTMLElement>>('map');
   private readonly _map = computed(() => this.initializeMap(this._mapElement().nativeElement));
 
-  public radarImages = signal<RadarImageInfo[]>([]);
-  private _meteoSubscription: Subscription | undefined;
+  public readonly isLoading = signal(false);
 
-  public currentRadarImage = signal<CurrentImage | undefined>(undefined);
+  public readonly radarImages = signal<CurrentImage[]>([]);
+  public readonly currentRadarImage = signal<CurrentImage | undefined>(undefined);
 
-  public readonly date = new Date();
+  public readonly refreshedAt = signal<Date | undefined>(undefined);
+
 
   public readonly formModel = signal({
     slider: 0
-  })
+  });
 
-  public readonly form = form(this.formModel, (schemaPath) => {
-    max(schemaPath.slider, () => this.radarImages().length - 1);
-    disabled(schemaPath.slider, { when: () => this.radarImages().length === 0 });
+  public readonly form = form(this.formModel, f => {
+    max(f.slider, () => this.radarImages().length - 1);
+    disabled(f.slider, { when: () => this.radarImages().length === 0 });
   });
 
 
@@ -57,7 +57,11 @@ export class MapComponent {
       untracked(() => this.displayRadarImage(sliderValue));
     });
 
-    // this.refreshRadarImage();
+    effect(() => {
+      this.radarImages();
+
+      console.log("radar images refreshed");
+    });
   }
 
 
@@ -83,34 +87,57 @@ export class MapComponent {
   }
 
 
-  private displayRadarImage(index: number): void {
+  private displayRadarImage(index?: number) {
     if (this.radarImages().length === 0) { return; }
 
+    index ??= this.radarImages().length - 1;
 
-    const imageInfo = this.radarImages()[index];
-    const url = imageInfo.path;
+    const image = this.radarImages()[index];
 
 
-    this.currentRadarImage()?.layer.removeFrom(this._map());
-
-    this.currentRadarImage.set({
-      info: imageInfo,
-      layer: new ImageOverlay(url, imageInfo.boundingBox, {
-        className: "radar-image",
-        attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>'
-      })
-    });
-
-    this.currentRadarImage()!.layer.addTo(this._map());
+    this.currentRadarImage()?.layer.setOpacity(0);
+    this.currentRadarImage.set(image);
+    this.currentRadarImage()!.layer.setOpacity(1);
   }
 
 
   public refreshRadarImage() {
-    this._meteoSubscription?.unsubscribe();
+    this.isLoading.set(true);
 
-    this._meteoSubscription = this._meteoService.getRadarImageInfo().subscribe(x => {
-      this.radarImages.set(x);
-      this.form.slider().value.set(x.length - 1);
+    this._meteoService.getRadarImages().subscribe(({ removed, added }) => {
+      this.isLoading.set(false);
+
+      this._removeRadarImages(removed);
+      this._addRadarImages(added);
+
+      this.form.slider().value.set(0); // This should help the slider effect to trigger in case the slider is already at the last index.
+      this.form.slider().value.set(this.radarImages().length - 1);
+
+      this.refreshedAt.set(new Date());
+
+      this.radarImages.set(this.radarImages().map(x => x));
+    });
+  }
+
+
+  private _removeRadarImages(images: RadarImage[]) {
+    images.forEach(image => {
+      const index = this.radarImages().findIndex(i => i.radarImage === image);
+      const removedImage = this.radarImages().splice(index, 1)[0];
+
+      removedImage.layer.removeFrom(this._map());
+    });
+  }
+
+  private _addRadarImages(images: RadarImage[]) {
+    images.forEach(image => {
+      const layer = new ImageOverlay(image.imageData, image.boundingBox, {
+        className: "radar-image",
+        opacity: 0,
+        attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>'
+      }).addTo(this._map());
+
+      this.radarImages().push({ layer, radarImage: image });
     });
   }
 }

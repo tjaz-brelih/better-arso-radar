@@ -1,32 +1,40 @@
 <div class="h-screen flex flex-col p-2 gap-2">
-  <div class="flex items-center justify-between">
-    <div>
-      <button appButton (click)="this.refreshRadarImage()">Refresh</button>
-    </div>
+  <div>
+    <button appButton (click)="this.refreshRadarImage()">Refresh</button>
 
-    <div class="flex items-center max-w-xl min-w-sm w-full">
-      <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full" />
-
-      <datalist id="markers">
-        @for (_ of this.radarImages(); track _.path) {
-          <option [value]="$index"></option>
-        }
-      </datalist>
-    </div>
-
-    <div>
-
-    </div>
+    @if (this.isLoading()) {
+      <span class="ml-2 text-gray-500">Loading...</span>
+    }
   </div>
 
-  <div class="flex-1">
-    <div class="absolute left-1/2 transform -translate-x-1/2 w-56 py-2 z-500 flex items-center justify-center text-xl bg-white border border-gray-400 rounded-b-lg">
-      @let date = this.currentRadarImage()?.info?.date;
+  <div class="flex-1 relative">
+    @let date = this.currentRadarImage()?.radarImage?.date;
 
-      @if (date) { {{ date | date: 'd.MM.yyyy HH:mm' }} }
-      @else { / }
-    </div>
+    @if (date) {
 
-    <div #map class="h-full border border-gray-400 rounded-lg"></div>
+      <!-- Time information -->
+      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 flex flex-col items-center justify-center bg-background-color border border-gray-border rounded-b-lg">
+        <div class="py-0.5 font-mono text-xl">
+          {{ date | date: 'd.MM.yyyy HH:mm' }}
+        </div>
+        <div class="w-full py-0.5 text-center text-xs border-t border-gray-border">
+          Refreshed at <span class="font-mono">{{ this.refreshedAt() | date: 'HH:mm' }}</span>
+        </div>
+      </div>
+
+
+      <!-- Slider -->
+      <div class="absolute bottom-0 left-1/2 px-4 py-2 w-xl transform -translate-x-1/2 z-500 bg-background-color border border-gray-border rounded-t-lg">
+        <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full" />
+
+        <datalist id="markers">
+          @for (_ of this.radarImages(); track _.radarImage.date) {
+            <option [value]="$index"></option>
+          }
+        </datalist>
+      </div>
+    }
+
+    <div #map class="h-full border border-gray-border rounded-lg"></div>
   </div>
 </div>

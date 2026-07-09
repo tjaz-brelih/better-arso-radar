@@ -1,11 +1,10 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
 
-
 @theme {
-  --default-font-family: 'Inter Variable';
+  --color-background-color: var(--color-white);
+  --color-gray-border: var(--color-gray-400);
 }
+
 
 .radar-image {
   image-rendering: pixelated;
