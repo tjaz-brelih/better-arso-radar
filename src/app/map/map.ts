@@ -1,15 +1,18 @@
 import { Component, computed, effect, ElementRef, inject, signal, untracked, viewChild } from "@angular/core";
 import { disabled, form, FormField, max } from "@angular/forms/signals";
 import { DatePipe } from "@angular/common";
+import { Subscription, timer } from "rxjs";
 
-import { ImageOverlay, Map, TileLayer } from "leaflet";
+import { CircleMarker, ImageOverlay, LayerGroup, Map, TileLayer } from "leaflet";
 
-import { MeteoSiService, RadarImage } from "../../services/meteo-si.service";
+import { MarkerStorageService } from "../../services/marker.storage";
+import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 
 import { SharedModule } from "../shared.module";
+import { Coordinates } from "../../models";
 
 
-type CurrentImage = {
+type LayerRadarImage = {
   layer: ImageOverlay;
   radarImage: RadarImage;
 };
@@ -23,17 +26,23 @@ type CurrentImage = {
 export class MapComponent {
   private readonly _zoomLimit = { min: 7, max: 12 };
 
-  private readonly _meteoService = inject(MeteoSiService);
+  private readonly _meteoService = inject(ArsoMeteoService);
+  private readonly _markerStorage = inject(MarkerStorageService);
 
   private readonly _mapElement = viewChild.required<ElementRef<HTMLElement>>('map');
   private readonly _map = computed(() => this.initializeMap(this._mapElement().nativeElement));
 
   public readonly isLoading = signal(false);
 
-  public readonly radarImages = signal<CurrentImage[]>([]);
-  public readonly currentRadarImage = signal<CurrentImage | undefined>(undefined);
+  public readonly radarImages = signal<LayerRadarImage[]>([]);
+  public readonly currentRadarImage = signal<LayerRadarImage | undefined>(undefined);
 
   public readonly refreshedAt = signal<Date | undefined>(undefined);
+
+  private _subscription: Subscription | undefined = undefined;
+
+
+  private _markerGroup = new LayerGroup();
 
 
   public readonly formModel = signal({
@@ -58,10 +67,14 @@ export class MapComponent {
     });
 
     effect(() => {
-      this.radarImages();
+      const refreshedAt = this.refreshedAt();
+      if (!refreshedAt) { return; }
 
-      console.log("radar images refreshed");
+      console.info("🌦️ refreshed radar images", refreshedAt.toLocaleTimeString());
     });
+
+
+    this.triggerTimer();
   }
 
 
@@ -79,9 +92,20 @@ export class MapComponent {
       zoom: 8
     });
 
+    this._markerStorage.getMarkers().forEach(coords => {
+      this._addMarker(coords);
+    });
+
+    map.on("contextmenu", (event) => {
+      const coords: Coordinates = [event.latlng.lat, event.latlng.lng];
+      this._addMarker(coords);
+    });
+
     new TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
+    map.addLayer(this._markerGroup);
 
     return map;
   }
@@ -90,10 +114,7 @@ export class MapComponent {
   private displayRadarImage(index?: number) {
     if (this.radarImages().length === 0) { return; }
 
-    index ??= this.radarImages().length - 1;
-
-    const image = this.radarImages()[index];
-
+    const image = this.radarImages()[index ?? this.radarImages().length - 1];
 
     this.currentRadarImage()?.layer.setOpacity(0);
     this.currentRadarImage.set(image);
@@ -101,7 +122,13 @@ export class MapComponent {
   }
 
 
-  public refreshRadarImage() {
+  public triggerTimer() {
+    this._subscription?.unsubscribe();
+    this._subscription = timer(0, 5 * 60 * 1000).subscribe(() => this.loadRadarImages());
+  }
+
+
+  public loadRadarImages() {
     this.isLoading.set(true);
 
     this._meteoService.getRadarImages().subscribe(({ removed, added }) => {
@@ -115,19 +142,13 @@ export class MapComponent {
 
       this.refreshedAt.set(new Date());
 
-      this.radarImages.set(this.radarImages().map(x => x));
+      console.debug("removed", removed.length, "images");
+      console.debug("added", added.length, "images");
+      console.debug("current image count is", this.radarImages().length);
+      console.debug("latest image date is", this.radarImages().at(-1)?.radarImage.date);
     });
   }
 
-
-  private _removeRadarImages(images: RadarImage[]) {
-    images.forEach(image => {
-      const index = this.radarImages().findIndex(i => i.radarImage === image);
-      const removedImage = this.radarImages().splice(index, 1)[0];
-
-      removedImage.layer.removeFrom(this._map());
-    });
-  }
 
   private _addRadarImages(images: RadarImage[]) {
     images.forEach(image => {
@@ -139,5 +160,33 @@ export class MapComponent {
 
       this.radarImages().push({ layer, radarImage: image });
     });
+  }
+
+  private _removeRadarImages(images: RadarImage[]) {
+    images.forEach(image => {
+      const index = this.radarImages().findIndex(i => i.radarImage === image);
+      const removedImage = this.radarImages().splice(index, 1)[0];
+
+      removedImage.layer.removeFrom(this._map());
+    });
+  }
+
+
+  private _addMarker(coords: Coordinates) {
+    const marker = new CircleMarker(coords, {
+      color: "red",
+      radius: 5,
+      fillColor: "transparent"
+    });
+
+    marker.on("dblclick", () => this._removeMarker(marker, coords));
+
+    this._markerGroup.addLayer(marker);
+    this._markerStorage.addMarker(coords);
+  }
+
+  private _removeMarker(marker: CircleMarker, coords: Coordinates) {
+    this._markerGroup.removeLayer(marker);
+    this._markerStorage.removeMarker(coords);
   }
 }

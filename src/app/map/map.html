@@ -1,6 +1,6 @@
 <div class="h-screen flex flex-col p-2 gap-2">
   <div>
-    <button appButton (click)="this.refreshRadarImage()">Refresh</button>
+    <button appButton (click)="this.triggerTimer()" [disabled]="this.isLoading()">Refresh</button>
 
     @if (this.isLoading()) {
       <span class="ml-2 text-gray-500">Loading...</span>

@@ -1,10 +1,10 @@
 import { NgModule } from "@angular/core";
 
-import { ButtonDirective } from "./components/button";
+import { ButtonComponent } from "./components/button";
 
 
 const STUFF = [
-  ButtonDirective
+  ButtonComponent
 ];
 
 
