@@ -10,18 +10,15 @@ jobs:
   angular:
     name: Angular build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [24.15.x]
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
 
     - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ^24.15.0
         cache: 'npm'
         cache-dependency-path: package-lock.json
 
@@ -30,3 +27,8 @@ jobs:
 
     - name: Build
       run: npm run build
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v5
+      with:
+        path: dist/browser/
