@@ -1,6 +1,6 @@
 {
   "/meteo/**": {
-    "target": "https://meteo.arso.gov.si",
+    "target": "https://vreme.arso.gov.si",
     "secure": true,
     "changeOrigin": true,
     "pathRewrite": {

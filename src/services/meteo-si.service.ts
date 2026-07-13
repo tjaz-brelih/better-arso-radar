@@ -59,9 +59,10 @@ export class ArsoMeteoService {
 
 
   private _getRadarImageInfo(): Observable<RadarImageInfo[]> {
-    const url = `${this.BASE_URL}/uploads/probase/www/nowcast/inca/inca_si0zm_data.json`;
+    const url = `${this.BASE_URL}/api/1.0/inca_precip_data/`;
+    const params = { lang: "sl" };
 
-    return this._client.get<{ valid: string, path: string, bbox: string }[]>(url).pipe(
+    return this._client.get<{ valid: string, path: string, bbox: string }[]>(url, { params }).pipe(
       map(arr => arr
         .map(x => {
           const split = x.bbox.split(",").map(Number);
