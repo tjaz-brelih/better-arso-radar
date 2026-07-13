@@ -93,7 +93,7 @@ export class MapComponent {
     });
 
     this._markerStorage.getMarkers().forEach(coords => {
-      this._addMarker(coords);
+      this._addMarker(coords, true);
     });
 
     map.on("contextmenu", (event) => {
@@ -141,11 +141,6 @@ export class MapComponent {
       this.form.slider().value.set(this.radarImages().length - 1);
 
       this.refreshedAt.set(new Date());
-
-      console.debug("removed", removed.length, "images");
-      console.debug("added", added.length, "images");
-      console.debug("current image count is", this.radarImages().length);
-      console.debug("latest image date is", this.radarImages().at(-1)?.radarImage.date);
     });
   }
 
@@ -172,7 +167,7 @@ export class MapComponent {
   }
 
 
-  private _addMarker(coords: Coordinates) {
+  private _addMarker(coords: Coordinates, noStore?: boolean) {
     const marker = new CircleMarker(coords, {
       color: "red",
       radius: 5,
@@ -182,7 +177,9 @@ export class MapComponent {
     marker.on("dblclick", () => this._removeMarker(marker, coords));
 
     this._markerGroup.addLayer(marker);
-    this._markerStorage.addMarker(coords);
+    if (!noStore) {
+      this._markerStorage.addMarker(coords);
+    }
   }
 
   private _removeMarker(marker: CircleMarker, coords: Coordinates) {
