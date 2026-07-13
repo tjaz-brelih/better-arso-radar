@@ -26,7 +26,7 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: npm run build -- --deploy-url /better-arso-radar/ --configuration production
+      run: npm run build -- --base-href /better-arso-radar/ --deploy-url /better-arso-radar/ --configuration production
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
