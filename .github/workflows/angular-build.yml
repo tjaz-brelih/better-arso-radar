@@ -1,5 +1,9 @@
 name: angular-build
 
+on:
+  pull_request:
+    branches: [ "main" ]
+
 jobs:
   build:
     name: Angular build
