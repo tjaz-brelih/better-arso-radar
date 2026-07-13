@@ -1,0 +1,21 @@
+name: angular-build
+
+jobs:
+  build:
+    name: Angular build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: ^24.15.0
+        cache: 'npm'
+
+    - name: Build
+      run: |
+        npm ci
+        npm run build -- --configuration production

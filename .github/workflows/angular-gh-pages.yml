@@ -1,10 +1,12 @@
-name: Angular build
+name: angular-github-pages
 
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+
+env:
+  page_subpath: /better-arso-radar/
+  artifact_name: github-pages-artifact
 
 jobs:
   build:
@@ -15,26 +17,26 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v7
 
-    - name: Setup Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
         node-version: ^24.15.0
         cache: 'npm'
-        cache-dependency-path: package-lock.json
 
     - name: Install dependencies
       run: npm ci
 
     - name: Build
-      run: npm run build -- --base-href /better-arso-radar/ --deploy-url /better-arso-radar/ --configuration production
+      run: npm run build -- --base-href ${{ env.page_subpath }} --deploy-url ${{ env.page_subpath }} --configuration production
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
       with:
-        name: github-pages
+        name: ${{ env.artifact_name }}
         path: ./dist/browser/
 
   deploy:
+    name: GitHub Pages deployment
     needs: build
     permissions:
       contents: read
@@ -43,7 +45,7 @@ jobs:
 
     environment:
       name: github-pages
-      url: ${{steps.deployment.outputs.page_url}}
+      url: ${{ steps.deployment.outputs.page_url }}
 
     runs-on: ubuntu-latest
     steps:
@@ -51,4 +53,4 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v5
         with:
-          artifact_name: github-pages
+          artifact_name: ${{ env.artifact_name }}
