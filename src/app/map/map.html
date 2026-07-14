@@ -13,18 +13,18 @@
     @if (date) {
 
       <!-- Time information -->
-      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 flex flex-col items-center justify-center bg-background-color border border-gray-border rounded-b-lg">
+      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 flex flex-col items-center justify-center bg-color-background border border-color-border rounded-b-lg">
         <div class="py-0.5 font-mono text-xl">
           {{ date | date: 'd.MM.yyyy HH:mm' }}
         </div>
-        <div class="w-full py-0.5 text-center text-xs border-t border-gray-border">
+        <div class="w-full py-0.5 text-center text-xs border-t border-color-border">
           Refreshed at <span class="font-mono">{{ this.refreshedAt() | date: 'HH:mm' }}</span>
         </div>
       </div>
 
 
       <!-- Slider -->
-      <div class="absolute bottom-0 left-1/2 px-4 py-2 w-xl transform -translate-x-1/2 z-500 bg-background-color border border-gray-border rounded-t-lg">
+      <div class="absolute bottom-0 left-1/2 px-4 py-2 w-xl transform -translate-x-1/2 z-500 bg-color-background border border-color-border rounded-t-lg">
         <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full" />
 
         <datalist id="markers">
@@ -35,6 +35,23 @@
       </div>
     }
 
-    <div #map class="h-full border border-gray-border rounded-lg"></div>
+    <div #map class="h-full border border-color-border rounded-lg" [cdkContextMenuTriggerFor]="contextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
   </div>
 </div>
+
+
+
+<ng-template #contextMenu>
+  <div class="min-w-56 py-1 rounded-lg text-sm font-medium shadow bg-color-background border border-color-border" cdkMenu>
+    @for (item of this.contextMenu; track item) {
+      <button
+        cdkMenuItem
+        (click)="item.action(this.contextMenuPosition()!)"
+        [disabled]="item.disabled?.() ?? false"
+        [class.hidden]="!(item.visible?.() ?? true)"
+        class="w-full px-4 py-1.5 text-start cursor-pointer focus:outline-0 hover:bg-gray-200 hover:text-black disabled:text-color-disabled disabled:cursor-default disabled:hover:bg-color-background">
+        {{ item.text }}
+      </button>
+    }
+  </div>
+</ng-template>

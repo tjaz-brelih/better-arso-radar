@@ -1,8 +1,11 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-background-color: var(--color-white);
-  --color-gray-border: var(--color-gray-400);
+  --color-color-background: var(--color-white);
+  --color-color-text: var(--color-gray-800);
+  --color-color-disabled: var(--color-gray-400);
+
+  --color-color-border: var(--color-gray-400);
 }
 
 
