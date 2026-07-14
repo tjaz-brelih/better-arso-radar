@@ -1,12 +1,14 @@
-import { Component, computed, effect, ElementRef, inject, signal, untracked, viewChild } from "@angular/core";
+import { Component, computed, effect, ElementRef, inject, Signal, signal, untracked, viewChild } from "@angular/core";
 import { disabled, form, FormField, max } from "@angular/forms/signals";
 import { DatePipe } from "@angular/common";
 import { Subscription, timer } from "rxjs";
 
-import { CircleMarker, ImageOverlay, LayerGroup, Map, TileLayer } from "leaflet";
+import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 
-import { MarkerStorageService } from "../../services/marker.storage";
+import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "leaflet";
+
 import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
+import { MarkerStorageService } from "../../services/marker.storage";
 
 import { SharedModule } from "../shared.module";
 import { Coordinates } from "../../models";
@@ -17,11 +19,18 @@ type LayerRadarImage = {
   radarImage: RadarImage;
 };
 
+type ContextMenuItem = {
+  text: string;
+  visible?: Signal<boolean>;
+  disabled?: Signal<boolean>;
+  action: (event: PointerEvent) => void;
+};
+
 
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, FormField, DatePipe]
+  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 7, max: 12 };
@@ -43,6 +52,44 @@ export class MapComponent {
 
 
   private _markerGroup = new LayerGroup();
+
+
+  public readonly contextMenuPosition = signal<PointerEvent | undefined>(undefined);
+
+  public readonly contextMenu: ContextMenuItem[] = [
+    {
+      text: "Add marker",
+      disabled: computed(() => {
+        const position = this.contextMenuPosition();
+        if (!position) { return true; }
+
+        return !!this._getClosestMarker(position);
+      }),
+      action: position => {
+        const point: Point = (this._map() as any).pointerEventToContainerPoint(position);
+        const latLng = this._map().containerPointToLatLng(point);
+
+        this._addMarker([latLng.lat, latLng.lng]);
+      }
+    },
+
+    {
+      text: "Remove marker",
+      // visible: position => !!this._getClosestMarker({ x: position.clientX, y: position.clientY }),
+      visible: computed(() => {
+        const position = this.contextMenuPosition();
+        if (!position) { return false; }
+
+        return !!this._getClosestMarker(position!);
+      }),
+      action: position => {
+        const closestMarker = this._getClosestMarker(position);
+        if (!closestMarker) { return; }
+
+        this._removeMarker(closestMarker.marker, closestMarker.coords);
+      }
+    }
+  ];
 
 
   public readonly formModel = signal({
@@ -93,12 +140,7 @@ export class MapComponent {
     });
 
     this._markerStorage.getMarkers().forEach(coords => {
-      this._addMarker(coords, true);
-    });
-
-    map.on("contextmenu", (event) => {
-      const coords: Coordinates = [event.latlng.lat, event.latlng.lng];
-      this._addMarker(coords);
+      this._addMarker(coords, false);
     });
 
     new TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -167,23 +209,46 @@ export class MapComponent {
   }
 
 
-  private _addMarker(coords: Coordinates, noStore?: boolean) {
+  private _addMarker(coords: Coordinates, store: boolean = true) {
     const marker = new CircleMarker(coords, {
       color: "red",
       radius: 5,
       fillColor: "transparent"
     });
 
-    marker.on("dblclick", () => this._removeMarker(marker, coords));
-
     this._markerGroup.addLayer(marker);
-    if (!noStore) {
-      this._markerStorage.addMarker(coords);
-    }
+
+    if (store) { this._markerStorage.addMarker(coords); }
   }
 
   private _removeMarker(marker: CircleMarker, coords: Coordinates) {
     this._markerGroup.removeLayer(marker);
     this._markerStorage.removeMarker(coords);
+  }
+
+  private _getClosestMarker(event: PointerEvent): { marker: CircleMarker, coords: Coordinates } | undefined {
+    let closest: { marker: CircleMarker, coords: Coordinates, distance: number } | undefined = undefined;
+    const containerPoint = (this._map() as any).pointerEventToContainerPoint(event);
+
+    this._markerGroup.getLayers().forEach(layer => {
+      const marker = layer as CircleMarker;
+      const latLng = marker.getLatLng();
+      const markerPoint = this._map().latLngToContainerPoint(latLng);
+
+      const distance = markerPoint.distanceTo(containerPoint);
+
+      // Determined experimentally
+      if (distance > 7) { return; }
+
+      if (!closest || distance < closest.distance) {
+        closest = {
+          marker,
+          coords: [latLng.lat, latLng.lng],
+          distance
+        };
+      }
+    });
+
+    return closest;
   }
 }
