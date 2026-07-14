@@ -24,7 +24,7 @@
 
 
       <!-- Slider -->
-      <div class="absolute bottom-0 left-1/2 px-4 py-2 w-xl transform -translate-x-1/2 z-500 bg-color-background border border-color-border rounded-t-lg">
+      <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-4 w-xl max-w-full transform -translate-x-1/2 z-500 bg-color-background border border-color-border rounded-t-lg">
         <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full" />
 
         <datalist id="markers">
@@ -35,7 +35,7 @@
       </div>
     }
 
-    <div #map class="h-full border border-color-border rounded-lg" [cdkContextMenuTriggerFor]="contextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
+    <div #map class="h-full border border-color-border rounded-lg focus:outline-0" [cdkContextMenuTriggerFor]="contextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
   </div>
 </div>
 
