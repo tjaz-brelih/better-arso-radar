@@ -2,7 +2,10 @@
 
 @theme {
   --color-color-background: var(--color-white);
+  --color-color-background-hover: var(--color-gray-200);
+
   --color-color-text: var(--color-gray-800);
+  --color-color-text-hover: var(--color-black);
   --color-color-disabled: var(--color-gray-400);
 
   --color-color-border: var(--color-gray-400);

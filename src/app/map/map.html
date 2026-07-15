@@ -1,42 +1,34 @@
-<div class="h-dvh flex flex-col p-2 gap-2">
-  <div>
-    <button appButton (click)="this.triggerTimer()" [disabled]="this.isLoading()">Refresh</button>
+<div class="h-dvh">
+  @let date = this.currentRadarImage()?.radarImage?.date;
 
-    @if (this.isLoading()) {
-      <span class="ml-2 text-gray-500">Loading...</span>
-    }
-  </div>
+  @if (date) {
 
-  <div class="flex-1 relative">
-    @let date = this.currentRadarImage()?.radarImage?.date;
-
-    @if (date) {
-
-      <!-- Time information -->
-      <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 flex flex-col items-center justify-center bg-color-background border border-color-border rounded-b-lg">
-        <div class="py-0.5 font-mono text-xl">
-          {{ date | date: 'd.MM.yyyy HH:mm' }}
-        </div>
-        <div class="w-full py-0.5 text-center text-xs border-t border-color-border">
-          Refreshed at <span class="font-mono">{{ this.refreshedAt() | date: 'HH:mm' }}</span>
-        </div>
+    <!-- Time information -->
+    <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 flex flex-col items-center justify-center bg-color-background border border-t-0 border-color-border rounded-b-lg">
+      <div class="py-0.5 font-mono text-xl">
+        {{ date | date: 'd.MM.yyyy HH:mm' }}
       </div>
-
-
-      <!-- Slider -->
-      <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-4 w-xl max-w-full transform -translate-x-1/2 z-500 bg-color-background border border-color-border rounded-t-lg">
-        <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full not-disabled:cursor-pointer" />
-
-        <datalist id="markers">
-          @for (_ of this.radarImages(); track _.radarImage.date) {
-            <option [value]="$index"></option>
-          }
-        </datalist>
+      <div class="w-full py-0.5 text-center text-xs border-t border-color-border">
+        Refreshed at <span class="font-mono">{{ this.refreshedAt() | date: 'HH:mm' }}</span>
       </div>
-    }
+    </div>
 
-    <div #map class="h-full border border-color-border rounded-lg focus:outline-0" [cdkContextMenuTriggerFor]="contextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
-  </div>
+
+    <!-- Slider -->
+    <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-4 w-xl max-w-full transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-lg">
+      <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full not-disabled:cursor-pointer" />
+
+      <datalist id="markers">
+        @for (_ of this.radarImages(); track _.radarImage.date) {
+          <option [value]="$index"></option>
+        }
+      </datalist>
+    </div>
+  }
+
+  <div #map class="h-full" [cdkContextMenuTriggerFor]="contextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
+
+  <app-map-controls class="absolute top-4 left-4 z-9999" (controlPressed)="this.onControlPressed($event)" />
 </div>
 
 
@@ -49,7 +41,7 @@
         (click)="item.action(this.contextMenuPosition()!)"
         [disabled]="item.disabled?.() ?? false"
         [class.hidden]="!(item.visible?.() ?? true)"
-        class="w-full px-4 py-1.5 text-start not-disabled:cursor-pointer focus:outline-0 hover:not-disabled:bg-gray-200 hover:not-disabled:text-black disabled:text-color-disabled">
+        class="w-full px-4 py-1.5 text-start not-disabled:cursor-pointer focus:outline-0 hover:not-disabled:bg-color-background-hover hover:not-disabled:text-color-text-hover disabled:text-color-disabled">
         {{ item.text }}
       </button>
     }

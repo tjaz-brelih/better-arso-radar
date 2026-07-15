@@ -7,6 +7,8 @@ import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 
 import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "leaflet";
 
+import { MapControlEvent, MapControlsComponent } from "./controls";
+
 import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { MarkerStorageService } from "../../services/marker.storage";
 
@@ -30,7 +32,7 @@ type ContextMenuItem = {
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem]
+  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem, MapControlsComponent]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 7, max: 12 };
@@ -125,9 +127,30 @@ export class MapComponent {
   }
 
 
+  public onControlPressed(event: MapControlEvent) {
+    switch (event) {
+      case 'zoomin':
+        this._map().zoomIn();
+        break;
+
+      case 'zoomout':
+        this._map().zoomOut();
+        break;
+
+      case 'refresh':
+        this.triggerTimer();
+        break;
+
+      case 'options':
+        console.log("Options button pressed");
+        break;
+    }
+  }
 
   private initializeMap(element: HTMLElement): Map {
     const map = new Map(element, {
+      zoomControl: false,
+
       minZoom: this._zoomLimit.min,
       maxZoom: this._zoomLimit.max,
 
