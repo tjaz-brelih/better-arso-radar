@@ -1,4 +1,4 @@
-<div class="h-screen flex flex-col p-2 gap-2">
+<div class="h-dvh flex flex-col p-2 gap-2">
   <div>
     <button appButton (click)="this.triggerTimer()" [disabled]="this.isLoading()">Refresh</button>
 
@@ -25,7 +25,7 @@
 
       <!-- Slider -->
       <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-4 w-xl max-w-full transform -translate-x-1/2 z-500 bg-color-background border border-color-border rounded-t-lg">
-        <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full" />
+        <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full not-disabled:cursor-pointer" />
 
         <datalist id="markers">
           @for (_ of this.radarImages(); track _.radarImage.date) {
@@ -42,14 +42,14 @@
 
 
 <ng-template #contextMenu>
-  <div class="min-w-56 py-1 rounded-lg text-sm font-medium shadow bg-color-background border border-color-border" cdkMenu>
+  <div class="min-w-56 py-1 rounded-lg text-sm shadow-xl/30 bg-color-background border border-color-border" cdkMenu>
     @for (item of this.contextMenu; track item) {
       <button
         cdkMenuItem
         (click)="item.action(this.contextMenuPosition()!)"
         [disabled]="item.disabled?.() ?? false"
         [class.hidden]="!(item.visible?.() ?? true)"
-        class="w-full px-4 py-1.5 text-start cursor-pointer focus:outline-0 hover:bg-gray-200 hover:text-black disabled:text-color-disabled disabled:cursor-default disabled:hover:bg-color-background">
+        class="w-full px-4 py-1.5 text-start not-disabled:cursor-pointer focus:outline-0 hover:not-disabled:bg-gray-200 hover:not-disabled:text-black disabled:text-color-disabled">
         {{ item.text }}
       </button>
     }
