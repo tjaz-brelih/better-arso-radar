@@ -3,6 +3,7 @@
 @theme {
   --color-color-background: var(--color-white);
   --color-color-background-hover: var(--color-gray-200);
+  --color-color-background-active: var(--color-gray-300);
 
   --color-color-text: var(--color-gray-800);
   --color-color-text-hover: var(--color-black);
@@ -10,8 +11,8 @@
 
   --color-color-border: var(--color-gray-400);
 
-  --font-sans: 'Roboto Variable', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: 'Roboto Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --font-sans: "Roboto Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "Roboto Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 
