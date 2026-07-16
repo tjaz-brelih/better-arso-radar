@@ -8,9 +8,9 @@ import { Component } from "@angular/core";
   `,
   host: {
     'class': `
-      px-3 py-1 rounded-full cursor-pointer font-medium text-sm bg-teal-500 text-white
-      disabled:cursor-default disabled:bg-gray-300
-      hover:bg-teal-600
+      block p-1.5 bg-color-background border border-color-border rounded-lg
+      not-disabled:cursor-pointer not-disabled:hover:bg-color-background-hover not-disabled:hover:text-color-text-hover
+      disabled:text-color-disabled
     `
   }
 })
