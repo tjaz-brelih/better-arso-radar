@@ -8,6 +8,7 @@ import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
 import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "leaflet";
 
 import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
+import { PositionStorageService } from "../../services/position.storage";
 import { MarkerStorageService } from "../../services/marker.storage";
 
 import { SharedModule } from "../shared.module";
@@ -33,10 +34,11 @@ type ContextMenuItem = {
   imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem]
 })
 export class MapComponent {
-  private readonly _zoomLimit = { min: 7, max: 15 };
+  private readonly _zoomLimit = { min: 7, max: 14 };
 
   private readonly _meteoService = inject(ArsoMeteoService);
   private readonly _markerStorage = inject(MarkerStorageService);
+  private readonly _positionStorage = inject(PositionStorageService);
 
   private readonly _mapElement = viewChild.required<ElementRef<HTMLElement>>('map');
   private readonly _map = computed(() => this.initializeMap(this._mapElement().nativeElement));
@@ -75,7 +77,6 @@ export class MapComponent {
 
     {
       text: "Remove marker",
-      // visible: position => !!this._getClosestMarker({ x: position.clientX, y: position.clientY }),
       visible: computed(() => {
         const position = this.contextMenuPosition();
         if (!position) { return false; }
@@ -126,6 +127,8 @@ export class MapComponent {
 
 
   private initializeMap(element: HTMLElement): Map {
+    const position = this._positionStorage.getPosition();
+
     const map = new Map(element, {
       zoomControl: false,
 
@@ -136,8 +139,8 @@ export class MapComponent {
       zoomDelta: 0.5,
       wheelPxPerZoomLevel: 60 * 1.5,
 
-      center: [46.120, 14.815],
-      zoom: 8
+      center: position.center,
+      zoom: position.zoom
     });
 
     this._markerStorage.getMarkers().forEach(coords => {
@@ -156,6 +159,19 @@ export class MapComponent {
 
   public zoom(direction: "in" | "out") {
     direction === "in" ? this._map().zoomIn() : this._map().zoomOut();
+  }
+
+  public setDefaultPosition() {
+    const center = this._map().getCenter();
+    const zoom = this._map().getZoom();
+
+    this._positionStorage.savePosition({ center: [center.lat, center.lng], zoom });
+  }
+
+  public resetPosition() {
+    const position = this._positionStorage.getPosition();
+
+    this._map().setView(position.center, position.zoom);
   }
 
 
