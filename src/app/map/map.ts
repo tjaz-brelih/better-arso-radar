@@ -11,9 +11,6 @@ import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
 import { MarkerStorageService } from "../../services/marker.storage";
 
-import { ButtonGroupDirective } from "../components/button-group";
-import { IconComponent } from "../components/icon";
-
 import { SharedModule } from "../shared.module";
 import { Coordinates } from "../../models";
 
@@ -34,7 +31,7 @@ type ContextMenuItem = {
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem, ButtonGroupDirective, IconComponent]
+  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 7, max: 14 };

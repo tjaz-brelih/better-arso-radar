@@ -18,16 +18,8 @@ export class ButtonGroupDirective {
         for (let i = 0; i < buttons.length; i++) {
           const classList = buttons[i].nativeElement.classList as DOMTokenList;
 
-          if (i > 0)
-          {
-            classList.add("rounded-t-none");
-          }
-
-          if (i < buttons.length - 1)
-          {
-            classList.add("rounded-b-none");
-            classList.add("border-b-0");
-          }
+          if (i > 0) { classList.add("rounded-t-none"); }
+          if (i < buttons.length - 1) { classList.add("rounded-b-none", "border-b-0"); }
         }
       });
     });
