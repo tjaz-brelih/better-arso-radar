@@ -34,7 +34,7 @@ type ContextMenuItem = {
   imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, CdkMenu, CdkMenuItem]
 })
 export class MapComponent {
-  private readonly _zoomLimit = { min: 7, max: 14 };
+  private readonly _zoomLimit = { min: 6, max: 14 };
 
   private readonly _meteoService = inject(ArsoMeteoService);
   private readonly _markerStorage = inject(MarkerStorageService);
