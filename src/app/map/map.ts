@@ -111,7 +111,7 @@ export class MapComponent {
     effect(() => {
       const sliderValue = this.form.slider().value();
 
-      untracked(() => this.displayRadarImage(sliderValue));
+      untracked(() => this._displayRadarImage(sliderValue));
     });
 
     effect(() => {
@@ -148,7 +148,8 @@ export class MapComponent {
     });
 
     new TileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      className: "dark:invert dark:grayscale"
     }).addTo(map);
 
     map.addLayer(this._markerGroup);
@@ -175,7 +176,7 @@ export class MapComponent {
   }
 
 
-  private displayRadarImage(index?: number) {
+  private _displayRadarImage(index?: number) {
     if (this.radarImages().length === 0) { return; }
 
     const image = this.radarImages()[index ?? this.radarImages().length - 1];
@@ -188,11 +189,11 @@ export class MapComponent {
 
   public triggerTimer() {
     this._subscription?.unsubscribe();
-    this._subscription = timer(0, 5 * 60 * 1000).subscribe(() => this.loadRadarImages());
+    this._subscription = timer(0, 5 * 60 * 1000).subscribe(() => this._loadRadarImages());
   }
 
 
-  public loadRadarImages() {
+  private _loadRadarImages() {
     this.isLoading.set(true);
 
     this._meteoService.getRadarImages().subscribe(({ removed, added }) => {
@@ -212,9 +213,9 @@ export class MapComponent {
   private _addRadarImages(images: RadarImage[]) {
     images.forEach(image => {
       const layer = new ImageOverlay(image.imageData, image.boundingBox, {
-        className: "radar-image",
+        attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>',
+        className: "pixelated dark:brightness-75",
         opacity: 0,
-        attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>'
       }).addTo(this._map());
 
       this.radarImages().push({ layer, radarImage: image });
