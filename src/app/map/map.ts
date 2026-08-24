@@ -214,7 +214,7 @@ export class MapComponent {
     images.forEach(image => {
       const layer = new ImageOverlay(image.imageData, image.boundingBox, {
         attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>',
-        className: "pixelated dark:brightness-75",
+        className: "pixelated select-none dark:brightness-75",
         opacity: 0,
       }).addTo(this._map());
 
