@@ -1,17 +1,19 @@
 import { Service } from "@angular/core";
 import { Coordinates } from "../models";
+import { StorageService } from "./settings";
 
 
 @Service()
-export class MarkerStorageService {
-  private readonly _storage = localStorage;
-  private readonly _storageKey = "markers";
+export class MarkerStorageService extends StorageService<Coordinates[]> {
+  protected readonly _storageKey = "markers";
+
+  protected readonly default = <Coordinates[]>[];
 
   private _markers = <Coordinates[]>[];
 
 
   public getMarkers(): Coordinates[] {
-    this._markers = this._getMarkersFromStorage();
+    this._markers = this._get();
     return this._markers;
   }
 
@@ -27,15 +29,5 @@ export class MarkerStorageService {
 
   public saveMarkers(markers: Coordinates[]) {
     this._storage.setItem(this._storageKey, JSON.stringify(markers));
-  }
-
-
-  private _getMarkersFromStorage(): Coordinates[] {
-    try {
-      return <Coordinates[]>JSON.parse(this._storage.getItem(this._storageKey) ?? "[]");
-    }
-    catch {
-      return [];
-    }
   }
 }

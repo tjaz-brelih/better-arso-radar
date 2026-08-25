@@ -2,7 +2,7 @@
 
 
 <!-- Map controls -->
-<div class="absolute top-4 left-4 z-500 flex flex-col gap-2">
+<div class="absolute top-4 left-4 z-500 flex flex-col gap-4">
 
   <!-- Zoom -->
   <app-button-group>
@@ -34,11 +34,11 @@
   </app-button-group>
 
   <!-- Settings -->
-  <!-- <app-button-group>
-    <button appButton disabled appTooltip="Settings">
+  <app-button-group>
+    <button appButton (click)="this.openSettingsDialog()" appTooltip="Settings">
       <app-icon icon="cog" />
     </button>
-  </app-button-group> -->
+  </app-button-group>
 
 </div>
 
@@ -57,7 +57,7 @@
 
 
   <!-- Slider -->
-  <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-4 w-xl max-w-full transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-lg">
+  <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-6 w-xl max-w-[80%] transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-2xl">
     <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full not-disabled:cursor-pointer" />
 
     <datalist id="markers">

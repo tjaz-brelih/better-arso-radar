@@ -4,6 +4,7 @@ import { DatePipe } from "@angular/common";
 import { Subscription, timer } from "rxjs";
 
 import { CdkContextMenuTrigger, CdkMenu, CdkMenuItem } from "@angular/cdk/menu";
+import { Dialog } from "@angular/cdk/dialog";
 
 import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "leaflet";
 
@@ -11,6 +12,7 @@ import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
 import { MarkerStorageService } from "../../services/marker.storage";
 
+import { SettingsDialogComponent } from "../dialogs/settings.dialog";
 import { SharedModule } from "../shared.module";
 import { Coordinates } from "../../models";
 
@@ -35,6 +37,8 @@ type ContextMenuItem = {
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 6, max: 14 };
+
+  private readonly _dialog = inject(Dialog);
 
   private readonly _meteoService = inject(ArsoMeteoService);
   private readonly _markerStorage = inject(MarkerStorageService);
@@ -127,7 +131,7 @@ export class MapComponent {
 
 
   private initializeMap(element: HTMLElement): Map {
-    const position = this._positionStorage.getPosition();
+    const position = this._positionStorage.get();
 
     const map = new Map(element, {
       zoomControl: false,
@@ -166,13 +170,17 @@ export class MapComponent {
     const center = this._map().getCenter();
     const zoom = this._map().getZoom();
 
-    this._positionStorage.savePosition({ center: [center.lat, center.lng], zoom });
+    this._positionStorage.save({ center: [center.lat, center.lng], zoom });
   }
 
   public resetPosition() {
-    const position = this._positionStorage.getPosition();
+    const position = this._positionStorage.get();
 
     this._map().setView(position.center, position.zoom);
+  }
+
+  public openSettingsDialog() {
+    SettingsDialogComponent.open(this._dialog);
   }
 
 
@@ -214,7 +222,7 @@ export class MapComponent {
     images.forEach(image => {
       const layer = new ImageOverlay(image.imageData, image.boundingBox, {
         attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>',
-        className: "pixelated dark:brightness-75",
+        className: "pixelated select-none dark:brightness-75",
         opacity: 0,
       }).addTo(this._map());
 
