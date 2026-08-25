@@ -7,7 +7,7 @@ import { IconService } from "../../services/icon.service";
   selector: "app-icon",
   template: "",
   host: {
-    class: "block size-5"
+    class: "size-full"
   }
 })
 export class IconComponent {

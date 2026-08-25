@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1000 1000" version="1.1" xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;">
+    <g transform="matrix(47.092977,0,0,47.092977,-62.709198,-285.408426)">
+        <path d="M2.165,16.083C2.186,17.723 2.944,19.394 6.75,19.5L18,19.5C18.001,19.5 18.003,19.5 18.004,19.5C20.061,19.5 21.754,18.678 21.754,16.621C21.754,15.065 20.786,13.919 19.332,13.368C19.444,13.049 19.502,12.712 19.502,12.373C19.502,10.728 18.148,9.373 16.502,9.373C16.187,9.373 15.767,9.508 15.468,9.605C14.931,7.598 11.981,6.744 10.218,6.89C7.874,7.084 5.383,8.907 5.787,11.829C3.947,12.436 2.134,13.678 2.165,16.083Z" style="fill:rgb(142,142,142);fill-rule:nonzero;stroke:black;stroke-width:1.5px;"/>
+    </g>
+    <g id="Rain" transform="matrix(1,0,0,1,210,24)" style="fill:none;stroke:rgb(0,84,191);stroke-width:105.83px;stroke-miterlimit:1.5;">
+        <g transform="matrix(1,0,0,0.707547,308,230.783019)">
+            <path d="M211,731L323,943" />
+        </g>
+        <g transform="matrix(1,0,0,0.707547,58,230.783019)">
+            <path d="M211,731L323,943" />
+        </g>
+        <g transform="matrix(1,0,0,0.707547,-192,230.783019)">
+            <path d="M211,731L323,943" />
+        </g>
+    </g>
+</svg>

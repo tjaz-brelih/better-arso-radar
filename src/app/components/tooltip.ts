@@ -1,7 +1,19 @@
 import { Component, Directive, ElementRef, inject, Injector, input, ViewContainerRef } from "@angular/core";
 
-import { createFlexibleConnectedPositionStrategy, createOverlayRef, OverlayRef } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
+import { ConnectedPosition, createFlexibleConnectedPositionStrategy, createOverlayRef, OverlayRef } from "@angular/cdk/overlay";
+
+
+type Direction = 'top' | 'bottom' | 'left' | 'right';
+
+const offset = 8;
+
+const directionToPosition: Record<Direction, ConnectedPosition> = {
+  top: { originX: "center", originY: "top", overlayX: "center", overlayY: "bottom", offsetY: -offset },
+  bottom: { originX: "center", originY: "bottom", overlayX: "center", overlayY: "top", offsetY: offset },
+  left: { originX: "start", originY: "center", overlayX: "end", overlayY: "center", offsetX: -offset },
+  right: { originX: "end", originY: "center", overlayX: "start", overlayY: "center", offsetX: offset }
+};
 
 
 @Directive({
@@ -13,6 +25,7 @@ import { ComponentPortal } from "@angular/cdk/portal";
 })
 export class TooltipDirective {
   text = input.required<string>({ alias: "appTooltip" });
+  location = input<Direction>('right');
 
   private _injector = inject(Injector);
   private _viewContainerRef = inject(ViewContainerRef);
@@ -45,9 +58,7 @@ export class TooltipDirective {
       this._elementRef.nativeElement
     );
 
-    strategy.withPositions([
-      { originX: "end", originY: "center", overlayX: "start", overlayY: "center", offsetX: 8 }
-    ]);
+    strategy.withPositions([ directionToPosition[this.location()] ]);
 
 
     return (this._overlayRef = createOverlayRef(this._injector, { positionStrategy: strategy }));

@@ -1,4 +1,5 @@
 import { Service } from "@angular/core";
+import { StorageService } from "./settings";
 
 
 type Position = {
@@ -8,31 +9,11 @@ type Position = {
 
 
 @Service()
-export class PositionStorageService {
-  private readonly _storageKey = "position";
-  private readonly _storage = window.localStorage;
+export class PositionStorageService extends StorageService<Position> {
+  protected readonly _storageKey = "position";
 
-  private static readonly DefaultPosition: Position = {
+  protected readonly default: Position = {
     center: [46.120, 14.815],
     zoom: 8
   };
-
-
-  public getPosition(): Position {
-    return this._getInternal() ?? PositionStorageService.DefaultPosition;
-  }
-
-  public savePosition(position: Position) {
-    this._storage.setItem(this._storageKey, JSON.stringify(position));
-  }
-
-
-  private _getInternal(): Position | undefined {
-    try {
-      return <Position>JSON.parse(this._storage.getItem(this._storageKey) ?? "");
-    }
-    catch {
-      return undefined;
-    }
-  }
 }
