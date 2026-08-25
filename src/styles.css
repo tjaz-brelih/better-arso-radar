@@ -52,3 +52,7 @@
 h1 {
   @apply text-2xl font-bold;
 }
+
+.leaflet-control-attribution {
+  @apply bg-color-background! text-color-text!;
+}
