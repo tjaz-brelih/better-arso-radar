@@ -2,7 +2,7 @@ import { Component, effect, inject, signal, untracked } from "@angular/core";
 import { Dialog } from "@angular/cdk/dialog";
 
 import { IconComponent } from "../components/icon";
-import { ButtonComponent } from "../components/button";
+import { IconButtonComponent } from "../components/button";
 import { TooltipDirective } from "../components/tooltip";
 import { ButtonGroupDirective } from "../components/button-group";
 
@@ -19,15 +19,15 @@ import { ThemeService } from "../../services/theme.service";
         <label>Theme:</label>
 
         <app-button-group direction="horizontal">
-          <button appButton [active]="this.theme() === undefined" (click)="this.theme.set(undefined)" appTooltip="Follow system preference" location="bottom">
+          <button appIconButton [active]="this.theme() === undefined" (click)="this.theme.set(undefined)" appTooltip="Follow system preference" location="bottom">
             <app-icon icon="sun-moon" />
           </button>
 
-          <button appButton [active]="this.theme() === 'light'" (click)="this.theme.set('light')" appTooltip="Light theme" location="bottom">
+          <button appIconButton [active]="this.theme() === 'light'" (click)="this.theme.set('light')" appTooltip="Light theme" location="bottom">
             <app-icon icon="sun" />
           </button>
 
-          <button appButton [active]="this.theme() === 'dark'" (click)="this.theme.set('dark')" appTooltip="Dark theme" location="bottom">
+          <button appIconButton [active]="this.theme() === 'dark'" (click)="this.theme.set('dark')" appTooltip="Dark theme" location="bottom">
             <app-icon icon="moon" />
           </button>
         </app-button-group>
@@ -36,7 +36,7 @@ import { ThemeService } from "../../services/theme.service";
     </div>
   `,
 
-  imports: [ButtonGroupDirective, ButtonComponent, IconComponent, TooltipDirective],
+  imports: [ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirective],
 })
 export class SettingsDialogComponent {
   private _themeService = inject(ThemeService);

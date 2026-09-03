@@ -6,38 +6,43 @@
 
   <!-- Zoom -->
   <app-button-group>
-    <button appButton (click)="this.zoom('in')">
+    <button appIconButton (click)="this.zoom('in')">
       <app-icon icon="plus" />
     </button>
 
-    <button appButton (click)="this.zoom('out')">
+    <button appIconButton (click)="this.zoom('out')">
       <app-icon icon="minus" />
     </button>
   </app-button-group>
 
   <!-- Location -->
   <app-button-group>
-    <button appButton (click)="this.setDefaultPosition()" appTooltip="Set default map view">
+    <button appIconButton (click)="this.setDefaultPosition()" appTooltip="Set default map view">
       <app-icon icon="map-pin" />
     </button>
 
-    <button appButton (click)="this.resetPosition()" appTooltip="Reset map view">
+    <button appIconButton (click)="this.resetPosition()" appTooltip="Reset map view">
       <app-icon icon="viewfinder-circle" />
     </button>
   </app-button-group>
 
   <!-- Refresh -->
   <app-button-group>
-    <button appButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
+    <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
       <app-icon icon="arrow-path" />
     </button>
   </app-button-group>
 
   <!-- Settings -->
   <app-button-group>
-    <button appButton (click)="this.openSettingsDialog()" appTooltip="Settings">
+    <button appIconButton (click)="this.openSettingsDialog()" appTooltip="Settings">
       <app-icon icon="cog" />
     </button>
+
+    <!-- Temp marker dialog -->
+     <!-- <button appIconButton (click)="this.openMarkerDialog()">
+      <app-icon icon="sun-moon" />
+     </button> -->
   </app-button-group>
 
 </div>

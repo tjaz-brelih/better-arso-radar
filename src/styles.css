@@ -1,7 +1,9 @@
 @import 'tailwindcss';
 
 :root {
-  --color-bg: var(--color-white);
+  --color-primary: var(--color-blue-500);
+
+  --color-bg: var(--color-neutral-100);
   --color-bg-hover: var(--color-neutral-200);
   --color-bg-active: var(--color-neutral-300);
 
@@ -12,6 +14,8 @@
   --color-border: var(--color-gray-400);
 
   &.dark {
+    --color-primary: var(--color-blue-600);
+
     --color-bg: var(--color-neutral-900);
     --color-bg-hover: var(--color-neutral-800);
     --color-bg-active: var(--color-neutral-700);
@@ -27,6 +31,8 @@
 @theme {
   --font-sans: "Roboto Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "Roboto Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --color-color-primary: var(--color-primary);
 
   --color-color-background: var(--color-bg);
   --color-color-background-hover: var(--color-bg-hover);

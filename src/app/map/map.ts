@@ -10,11 +10,12 @@ import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "l
 
 import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
-import { MarkerStorageService } from "../../services/marker.storage";
+import { Marker, MarkerStorageService } from "../../services/marker.storage";
 
 import { SettingsDialogComponent } from "../dialogs/settings.dialog";
 import { SharedModule } from "../shared.module";
 import { Coordinates } from "../../models";
+import { MarkerDialogComponent } from "../dialogs/marker.dialog";
 
 
 type LayerRadarImage = {
@@ -64,18 +65,43 @@ export class MapComponent {
 
   public readonly contextMenu: ContextMenuItem[] = [
     {
-      text: "Add marker",
-      disabled: computed(() => {
+      text: "Add marker...",
+      visible: computed(() => {
         const position = this.contextMenuPosition();
         if (!position) { return true; }
 
-        return !!this._getClosestMarker(position);
+        return !this._getClosestMarker(position);
       }),
       action: position => {
         const point: Point = (this._map() as any).pointerEventToContainerPoint(position);
         const latLng = this._map().containerPointToLatLng(point);
 
-        this._addMarker([latLng.lat, latLng.lng]);
+        MarkerDialogComponent.open(this._dialog, { coordinates: [latLng.lat, latLng.lng] }).closed.subscribe(x => {
+          if (!x) { return; }
+
+          this._addMarker(x);
+        });
+      }
+    },
+
+    {
+      text: "Edit marker...",
+      disabled: signal(true),
+      visible: computed(() => {
+        const position = this.contextMenuPosition();
+        if (!position) { return false; }
+
+        return !!this._getClosestMarker(position!);
+      }),
+      action: position => {
+        const closestMarker = this._getClosestMarker(position);
+        if (!closestMarker) { return; }
+
+        MarkerDialogComponent.open(this._dialog, { coordinates: closestMarker.coords }).closed.subscribe(x => {
+          if (!x) { return; }
+
+          this._updateMarker({ layer: closestMarker.marker, marker: x });
+        });
       }
     },
 
@@ -91,7 +117,7 @@ export class MapComponent {
         const closestMarker = this._getClosestMarker(position);
         if (!closestMarker) { return; }
 
-        this._removeMarker(closestMarker.marker, closestMarker.coords);
+        this._removeMarker(closestMarker.marker, { coordinates: closestMarker.coords });
       }
     }
   ];
@@ -240,21 +266,26 @@ export class MapComponent {
   }
 
 
-  private _addMarker(coords: Coordinates, store: boolean = true) {
-    const marker = new CircleMarker(coords, {
-      color: "red",
+  private _addMarker(marker: Marker, store: boolean = true) {
+    const layer = new CircleMarker(marker.coordinates, {
+      color: marker.color?.rgb ?? "red",
       radius: 5,
       fillColor: "transparent"
     });
 
-    this._markerGroup.addLayer(marker);
+    this._markerGroup.addLayer(layer);
 
-    if (store) { this._markerStorage.addMarker(coords); }
+    if (store) { this._markerStorage.addMarker(marker); }
   }
 
-  private _removeMarker(marker: CircleMarker, coords: Coordinates) {
-    this._markerGroup.removeLayer(marker);
-    this._markerStorage.removeMarker(coords);
+  private _updateMarker(data: { layer: CircleMarker, marker: Marker }) {
+    this._removeMarker(data.layer, data.marker);
+    this._addMarker(data.marker);
+  }
+
+  private _removeMarker(layer: CircleMarker, marker: Marker) {
+    this._markerGroup.removeLayer(layer);
+    this._markerStorage.removeMarker(marker);
   }
 
   private _getClosestMarker(event: PointerEvent): { marker: CircleMarker, coords: Coordinates } | undefined {

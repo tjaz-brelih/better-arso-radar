@@ -1,13 +1,13 @@
 import { NgModule } from "@angular/core";
 
-import { ButtonComponent } from "./components/button";
+import { IconButtonComponent } from "./components/button";
 import { ButtonGroupDirective } from "./components/button-group";
 import { IconComponent } from "./components/icon";
 import { TooltipDirective } from "./components/tooltip";
 
 
 const STUFF = [
-  ButtonComponent,
+  IconButtonComponent,
   ButtonGroupDirective,
   IconComponent,
   TooltipDirective
