@@ -1,23 +1,29 @@
 @import 'tailwindcss';
 
 :root {
-  --color-bg: var(--color-white);
+  --color-primary: var(--color-blue-500);
+
+  --color-bg: var(--color-neutral-100);
   --color-bg-hover: var(--color-neutral-200);
   --color-bg-active: var(--color-neutral-300);
 
   --color-text: var(--color-neutral-800);
   --color-text-hover: var(--color-black);
+  --color-text-hover-shadow: rgb(0 0 0 / 0.2);
   --color-disabled: var(--color-neutral-400);
 
   --color-border: var(--color-gray-400);
 
   &.dark {
+    --color-primary: var(--color-blue-600);
+
     --color-bg: var(--color-neutral-900);
     --color-bg-hover: var(--color-neutral-800);
     --color-bg-active: var(--color-neutral-700);
 
     --color-text: var(--color-neutral-300);
     --color-text-hover: var(--color-neutral-100);
+    --color-text-hover-shadow: rgb(255 255 255 / 0.2);
     --color-disabled: var(--color-neutral-600);
 
     --color-border: var(--color-neutral-600);
@@ -28,15 +34,20 @@
   --font-sans: "Roboto Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "Roboto Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 
+  --color-color-primary: var(--color-primary);
+
   --color-color-background: var(--color-bg);
   --color-color-background-hover: var(--color-bg-hover);
   --color-color-background-active: var(--color-bg-active);
 
   --color-color-text: var(--color-text);
   --color-color-text-hover: var(--color-text-hover);
+  --color-color-text-hover-shadow: var(--color-text-hover-shadow);
   --color-color-disabled: var(--color-disabled);
 
   --color-color-border: var(--color-border);
+
+  --text-shadow-hover: 0 0 6px var(--color-text-hover-shadow);
 }
 
 

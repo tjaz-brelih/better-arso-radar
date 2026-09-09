@@ -1,5 +1,5 @@
 import { computed, contentChildren, Directive, effect, ElementRef, input, untracked } from "@angular/core";
-import { ButtonComponent } from "./button";
+import { IconButtonComponent } from "./button";
 
 
 
@@ -22,7 +22,7 @@ export class ButtonGroupDirective {
       : ['rounded-l-none', 'rounded-r-none', 'border-r-0'];
   });
 
-  private _buttons = contentChildren(ButtonComponent, { read: ElementRef });
+  private _buttons = contentChildren(IconButtonComponent, { read: ElementRef });
 
 
   constructor() {

@@ -1,8 +1,11 @@
 import { Component, input } from "@angular/core";
 
 
+type ButtonStyle = 'text' | 'filled' | 'outlined';
+
+
 @Component({
-  selector: "button[appButton], a[appButton]",
+  selector: "button[appIconButton], a[appIconButton]",
   template: `
     <ng-content />
   `,
@@ -19,6 +22,27 @@ import { Component, input } from "@angular/core";
     '[class.text-color-text-hover]': "this.active()"
   }
 })
-export class ButtonComponent {
+export class IconButtonComponent {
   public active = input<boolean>(false);
- }
+}
+
+
+
+@Component({
+  selector: "button[appButton]",
+  template: `<ng-content />`,
+  host: {
+    class: `
+      px-4 py-1.5 rounded-lg
+      text-color-primary font-medium
+      cursor-pointer
+      hover:bg-color-primary/20
+    `,
+    "[class.bg-color-primary]": "this.style() === 'filled'",
+    "[class.text-white]": "this.style() === 'filled'",
+    "[class.hover:bg-color-primary/70]": "this.style() === 'filled'",
+  }
+})
+export class ButtonComponent {
+  style = input<ButtonStyle | "">('text', { alias: "appButton" });
+}
