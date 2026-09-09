@@ -32,7 +32,7 @@ import { Marker, MARKER_COLORS } from "../../models";
               class="size-6 rounded-full cursor-pointer data-selected:outline-2 data-selected:outline-offset-2 data-selected:outline-color-text"
               [style.background-color]="color.rgb"
               (click)="this.selectedColor.set(color)"
-              [attr.data-selected]="this.selectedColor() === color ? '' : undefined">
+              [attr.data-selected]="this.selectedColor().id === color.id ? '' : undefined">
             </div>
           }
 
@@ -66,9 +66,9 @@ export class MarkerDialogComponent {
   markerForm = form(this.markerModel);
 
 
-  public colors = MARKER_COLORS;
+  public colors = Object.values(MARKER_COLORS);
 
-  public selectedColor = signal(this.colors[0]);
+  public selectedColor = signal(this._marker.color ?? this.colors[0]);
 
 
   public static open(dialog: Dialog, marker: Marker) {
@@ -85,9 +85,9 @@ export class MarkerDialogComponent {
 
   public save() {
     this._dialogRef.close({
-      ...this._marker,
-      color: this.selectedColor(),
-      name: this.markerModel().name
+      coordinates: this._marker.coordinates,
+      name: this.markerModel().name,
+      color: this.selectedColor()
     })
   }
 }

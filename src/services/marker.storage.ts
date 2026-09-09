@@ -5,7 +5,6 @@ import { Coordinates, DEFAULT_MARKER_COLOR, Marker } from "../models";
 
 
 
-
 @Service()
 export class MarkerStorageService extends StorageService<Marker[]> {
   protected readonly _storageKey = "markers";
@@ -33,6 +32,7 @@ export class MarkerStorageService extends StorageService<Marker[]> {
   }
 
 
+  // Migrate old marker storage format to the new format.
   private _migrate(): Marker[] {
     let markers = this._get();
     if (markers.length === 0) { return []; }
