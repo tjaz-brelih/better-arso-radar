@@ -1,18 +1,9 @@
 import { Service } from "@angular/core";
-import { Coordinates } from "../models";
+
 import { StorageService } from "./settings";
+import { Coordinates, DEFAULT_MARKER_COLOR, Marker } from "../models";
 
 
-export type Marker = {
-  coordinates: Coordinates;
-
-  name?: string;
-
-  color?: {
-    rgb: string;
-    id: string;
-  }
-};
 
 
 @Service()
@@ -25,21 +16,34 @@ export class MarkerStorageService extends StorageService<Marker[]> {
 
 
   public getMarkers(): Marker[] {
-    this._markers = this._get();
+    this._markers = this._migrate();
+    this._markers.forEach(marker => { if (!marker.color) { marker.color = DEFAULT_MARKER_COLOR; } });
+
     return this._markers;
   }
 
   public addMarker(marker: Marker) {
     this._markers.push(marker);
-    this.saveMarkers(this._markers);
+    this.save(this._markers);
   }
 
   public removeMarker(marker: Marker) {
     this._markers.splice(this._markers.findIndex(x => x === marker), 1);
-    this.saveMarkers(this._markers);
+    this.save(this._markers);
   }
 
-  public saveMarkers(markers: Marker[]) {
-    this._storage.setItem(this._storageKey, JSON.stringify(markers));
+
+  private _migrate(): Marker[] {
+    let markers = this._get();
+    if (markers.length === 0) { return []; }
+
+    // Old marker storage used to store markers as arrays of coordinates
+    if (Array.isArray(markers[0])) {
+      markers = (markers as any as Coordinates[]).map(coordinates => ({ coordinates }));
+
+      this.save(markers);
+    }
+
+    return markers;
   }
 }

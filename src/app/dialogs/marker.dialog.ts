@@ -4,7 +4,7 @@ import { form, FormField } from "@angular/forms/signals";
 
 import { ButtonComponent } from "../components/button";
 
-import { Marker } from "../../services/marker.storage";
+import { Marker, MARKER_COLORS } from "../../models";
 
 
 @Component({
@@ -66,17 +66,7 @@ export class MarkerDialogComponent {
   markerForm = form(this.markerModel);
 
 
-  public colors = [
-    { rgb: "rgb(203, 30, 30)", id: "red" },
-    { rgb: "rgb(129, 223, 35)", id: "green" },
-    { rgb: "rgb(41, 45, 255)", id: "blue" },
-    { rgb: "rgb(220, 184, 40)", id: "yellow" },
-    { rgb: "rgb(175, 52, 244)", id: "purple" },
-    { rgb: "rgb(24, 195, 223)", id: "cyan" },
-
-    { rgb: "#fff", id: "white" },
-    { rgb: "#000", id: "black" }
-  ];
+  public colors = MARKER_COLORS;
 
   public selectedColor = signal(this.colors[0]);
 

@@ -10,11 +10,11 @@ import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "l
 
 import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
-import { Marker, MarkerStorageService } from "../../services/marker.storage";
+import { MarkerStorageService } from "../../services/marker.storage";
 
 import { SettingsDialogComponent } from "../dialogs/settings.dialog";
 import { SharedModule } from "../shared.module";
-import { Coordinates } from "../../models";
+import { Coordinates, Marker } from "../../models";
 import { MarkerDialogComponent } from "../dialogs/marker.dialog";
 
 
