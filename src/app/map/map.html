@@ -15,14 +15,10 @@
     </button>
   </app-button-group>
 
-  <!-- Location -->
+  <!-- Geolocation -->
   <app-button-group>
-    <button appIconButton (click)="this.setDefaultPosition()" appTooltip="Set default map view">
+    <button appIconButton (click)="this.setGeolocationMarker()" appTooltip="Add marker at your current location">
       <app-icon icon="map-pin" />
-    </button>
-
-    <button appIconButton (click)="this.resetPosition()" appTooltip="Reset map view">
-      <app-icon icon="viewfinder-circle" />
     </button>
   </app-button-group>
 
@@ -43,8 +39,7 @@
 </div>
 
 
-@let date = this.currentRadarImage()?.radarImage?.date;
-@if (date) {
+@if (this.currentRadarImage()?.radarImage?.date; as date) {
   <!-- Time information -->
   <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 text-center bg-color-background border border-t-0 border-color-border rounded-b-lg">
     <div class="py-0.5 font-mono text-xl">

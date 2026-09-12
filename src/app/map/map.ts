@@ -13,10 +13,10 @@ import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
 import { MarkerStorageService } from "../../services/marker.storage";
 import { MenuDirective, MenuItemDirective } from "../components/menu";
+import { DEFAULT_MARKER_COLOR, Marker } from "../../models";
 
 import { SettingsDialogComponent } from "../dialogs/settings.dialog";
 import { MarkerDialogComponent } from "../dialogs/marker.dialog";
-import { Marker } from "../../models";
 
 
 type LayerRadarImage = {
@@ -209,17 +209,21 @@ export class MapComponent {
     direction === "in" ? this._map().zoomIn() : this._map().zoomOut();
   }
 
-  public setDefaultPosition() {
-    const center = this._map().getCenter();
-    const zoom = this._map().getZoom();
+  public setGeolocationMarker() {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const marker: Marker = {
+          coordinates: [position.coords.latitude, position.coords.longitude],
+          color: DEFAULT_MARKER_COLOR
+        };
 
-    this._positionStorage.save({ center: [center.lat, center.lng], zoom });
-  }
+        this._addMarker(marker);
 
-  public resetPosition() {
-    const position = this._positionStorage.get();
+        console.info("🌦️ added geolocation marker", marker);
+      },
 
-    this._map().setView(position.center, position.zoom);
+      error => console.warn("🌦️ failed to get geolocation", error)
+    );
   }
 
   public openSettingsDialog() {
