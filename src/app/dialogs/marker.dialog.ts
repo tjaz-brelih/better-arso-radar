@@ -1,14 +1,15 @@
+import { KeyValuePipe } from "@angular/common";
 import { Component, inject, signal } from "@angular/core";
 import { Dialog, DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { form, FormField } from "@angular/forms/signals";
 
 import { ButtonComponent } from "../components/button";
 
-import { Marker, MARKER_COLORS } from "../../models";
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
 
 
 @Component({
-  imports: [ButtonComponent, FormField],
+  imports: [ButtonComponent, FormField, KeyValuePipe],
 
   template: `
     <h1>Marker settings</h1>
@@ -27,12 +28,12 @@ import { Marker, MARKER_COLORS } from "../../models";
         <label>Color</label>
 
         <div class="flex gap-4 items-center px-1">
-          @for (color of this.colors; track color) {
+          @for (color of this.colors | keyvalue:null; track color.key) {
             <div
               class="size-6 rounded-full cursor-pointer data-selected:outline-2 data-selected:outline-offset-2 data-selected:outline-color-text"
-              [style.background-color]="color.rgb"
-              (click)="this.selectedColor.set(color)"
-              [attr.data-selected]="this.selectedColor().id === color.id ? '' : undefined">
+              [style.background]="color.value"
+              (click)="this.selectedColor.set(color.key)"
+              [attr.data-selected]="this.selectedColor() === color.key ? '' : undefined">
             </div>
           }
 
@@ -66,9 +67,9 @@ export class MarkerDialogComponent {
   markerForm = form(this.markerModel);
 
 
-  public colors = Object.values(MARKER_COLORS);
+  public colors = MARKER_COLORS;
 
-  public selectedColor = signal(this._marker.color ?? this.colors[0]);
+  public selectedColor = signal(this._marker.color?.id ?? DEFAULT_MARKER_COLOR);
 
 
   public static open(dialog: Dialog, marker: Marker) {
@@ -87,7 +88,7 @@ export class MarkerDialogComponent {
     this._dialogRef.close({
       coordinates: this._marker.coordinates,
       name: this.markerModel().name,
-      color: this.selectedColor()
+      color: { id:this.selectedColor() }
     })
   }
 }
