@@ -1,7 +1,7 @@
 import { Service } from "@angular/core";
 
 import { StorageService } from "./settings";
-import { Coordinates, DEFAULT_MARKER_COLOR, Marker } from "../models";
+import { Coordinates, DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../models";
 
 
 
@@ -16,7 +16,10 @@ export class MarkerStorageService extends StorageService<Marker[]> {
 
   public getMarkers(): Marker[] {
     this._markers = this._migrate();
-    this._markers.forEach(marker => { if (!marker.color) { marker.color = DEFAULT_MARKER_COLOR; } });
+    this._markers.forEach(marker => {
+      if (!marker.color) { marker.color = { id: DEFAULT_MARKER_COLOR}; }
+      if (!(marker.color.id in MARKER_COLORS)) { marker.color.id = DEFAULT_MARKER_COLOR; }
+    });
 
     return this._markers;
   }

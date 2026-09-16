@@ -19,7 +19,7 @@ export class MenuDirective { }
   hostDirectives: [CdkMenuItem],
   host: {
     class: `
-      w-full px-4 py-1.5 text-start select-none
+      block w-full px-4 py-1.5 text-start select-none
       not-disabled:cursor-pointer
       disabled:text-color-disabled
       focus:outline-0

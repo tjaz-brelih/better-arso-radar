@@ -13,7 +13,7 @@ import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
 import { MarkerStorageService } from "../../services/marker.storage";
 import { MenuDirective, MenuItemDirective } from "../components/menu";
-import { DEFAULT_MARKER_COLOR, Marker } from "../../models";
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
 
 import { SettingsDialogComponent } from "../dialogs/settings.dialog";
 import { MarkerDialogComponent } from "../dialogs/marker.dialog";
@@ -214,7 +214,7 @@ export class MapComponent {
       position => {
         const marker: Marker = {
           coordinates: [position.coords.latitude, position.coords.longitude],
-          color: DEFAULT_MARKER_COLOR
+          color: { id: DEFAULT_MARKER_COLOR }
         };
 
         this._addMarker(marker);
@@ -288,10 +288,16 @@ export class MapComponent {
 
 
   private _addMarker(marker: Marker, store: boolean = true) {
+    const [markerStrokeColor, markerClass] = marker.color!.id === "dynamic"
+      ? ["transparent", "stroke-black dark:stroke-white"]
+      : [MARKER_COLORS[marker.color!.id], ""]
+
     const layer = new CircleMarker(marker.coordinates, {
-      color: marker.color!.rgb,
       radius: 5,
-      fillColor: "transparent"
+      weight: 3, // Stroke width
+      fillColor: "transparent",
+      color: markerStrokeColor,
+      className: markerClass,
     });
 
     this._markerLayerGroup.addLayer(layer);
