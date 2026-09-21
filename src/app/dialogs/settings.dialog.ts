@@ -10,13 +10,15 @@ import { ThemeService } from "../../services/theme.service";
 
 
 @Component({
+  imports: [ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirective],
+
   template: `
     <h1>Settings</h1>
 
-    <div class="pt-6">
+    <div class="pt-6 grid grid-cols-[auto_1fr] gap-x-8 gap-y-6">
 
       <section class="flex flex-row items-center gap-4">
-        <label>Theme:</label>
+        <label>Theme</label>
 
         <app-button-group direction="horizontal">
           <button appIconButton [active]="this.theme() === undefined" (click)="this.theme.set(undefined)" appTooltip="Follow system preference" location="bottom">
@@ -36,7 +38,13 @@ import { ThemeService } from "../../services/theme.service";
     </div>
   `,
 
-  imports: [ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirective],
+  styles: `
+    @reference "tailwindcss";
+
+    section {
+      @apply col-span-2 grid grid-cols-subgrid items-center;
+    }
+  `
 })
 export class SettingsDialogComponent {
   private _themeService = inject(ThemeService);
