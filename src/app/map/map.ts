@@ -1,5 +1,4 @@
 import { Component, computed, effect, ElementRef, inject, Signal, signal, untracked, viewChild } from "@angular/core";
-import { disabled, form, FormField, max } from "@angular/forms/signals";
 import { DatePipe } from "@angular/common";
 import { Subscription, timer } from "rxjs";
 
@@ -36,7 +35,7 @@ type ContextMenuItem = {
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, MenuDirective, MenuItemDirective, SliderComponent]
+  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MenuDirective, MenuItemDirective, SliderComponent]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 6, max: 14 };
