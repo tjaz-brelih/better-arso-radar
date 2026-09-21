@@ -13,8 +13,9 @@ import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
 import { PositionStorageService } from "../../services/position.storage";
 import { MarkerStorageService } from "../../services/marker.storage";
 import { MenuDirective, MenuItemDirective } from "../components/menu";
-import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
+import { SliderComponent } from "../components/slider";
 
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
 import { SettingsDialogComponent } from "../dialogs/settings.dialog";
 import { MarkerDialogComponent } from "../dialogs/marker.dialog";
 
@@ -35,7 +36,7 @@ type ContextMenuItem = {
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, MenuDirective, MenuItemDirective]
+  imports: [SharedModule, FormField, DatePipe, CdkContextMenuTrigger, MenuDirective, MenuItemDirective, SliderComponent]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 6, max: 14 };
@@ -140,14 +141,7 @@ export class MapComponent {
   ];
 
 
-  public readonly formModel = signal({
-    slider: 0
-  });
-
-  public readonly form = form(this.formModel, f => {
-    max(f.slider, () => this.radarImages().length - 1);
-    disabled(f.slider, { when: () => this.radarImages().length === 0 });
-  });
+  public readonly slider = signal(0);
 
 
 
@@ -156,7 +150,7 @@ export class MapComponent {
     effect(() => this._map());
 
     effect(() => {
-      const sliderValue = this.form.slider().value();
+      const sliderValue = this.slider();
 
       untracked(() => this._displayRadarImage(sliderValue));
     });
@@ -257,8 +251,8 @@ export class MapComponent {
       this._removeRadarImages(removed);
       this._addRadarImages(added);
 
-      this.form.slider().value.set(0); // This should help the slider effect to trigger in case the slider is already at the last index.
-      this.form.slider().value.set(this.radarImages().length - 1);
+      this.slider.set(0); // This should help the slider effect to trigger in case the slider is already at the last index.
+      this.slider.set(this.radarImages().length - 1);
 
       this.refreshedAt.set(new Date());
     });
