@@ -15,7 +15,7 @@
   --color-border: var(--color-gray-400);
 
   &.dark {
-    --color-primary: var(--color-blue-600);
+    --color-primary: var(--color-blue-500);
 
     --color-bg: var(--color-neutral-900);
     --color-bg-hover: var(--color-neutral-800);
@@ -62,6 +62,10 @@
 
 h1 {
   @apply text-2xl font-bold;
+}
+
+a {
+  @apply text-color-primary!;
 }
 
 .leaflet-control-attribution {
