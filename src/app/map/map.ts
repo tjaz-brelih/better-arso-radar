@@ -39,6 +39,7 @@ export class MapComponent {
   private readonly _map = computed(() => this.initializeMap(this._mapElement().nativeElement));
 
   public readonly isLoading = signal(false);
+  public readonly isSpinning = signal(false);
 
   public readonly radarImages = signal<LayerRadarImage[]>([]);
   public readonly currentRadarImage = signal<LayerRadarImage | undefined>(undefined);
@@ -181,6 +182,11 @@ export class MapComponent {
   }
 
 
+  public onSpinIteration() {
+    if (!this.isLoading()) { this.isSpinning.set(false); }
+  }
+
+
   public triggerTimer() {
     this._subscription?.unsubscribe();
     this._subscription = timer(0, 5 * 60 * 1000).subscribe(() => this._loadRadarImages());
@@ -189,6 +195,7 @@ export class MapComponent {
 
   private _loadRadarImages() {
     this.isLoading.set(true);
+    this.isSpinning.set(true);
 
     this._meteoService.getRadarImages().subscribe(({ removed, added }) => {
       this.isLoading.set(false);

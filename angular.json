@@ -24,6 +24,7 @@
             ],
             "styles": [
               "src/styles.css",
+              "src/animations.css",
               "node_modules/leaflet/dist/leaflet.css",
               "node_modules/@fontsource-variable/roboto/wght.css",
               "node_modules/@fontsource-variable/roboto-mono/wght.css"
