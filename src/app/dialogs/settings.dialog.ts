@@ -1,12 +1,8 @@
 import { Component, effect, inject, signal, untracked } from "@angular/core";
 import { Dialog } from "@angular/cdk/dialog";
 
-import { IconComponent } from "../components/icon";
-import { IconButtonComponent } from "../components/button";
-import { TooltipDirective } from "../components/tooltip";
-import { ButtonGroupDirective } from "../components/button-group";
-
-import { ThemeService } from "../../services/theme.service";
+import { ThemeService } from "services";
+import { ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirective } from "components";
 
 
 @Component({

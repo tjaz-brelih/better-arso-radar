@@ -3,9 +3,8 @@ import { Component, inject, signal } from "@angular/core";
 import { Dialog, DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { form, FormField } from "@angular/forms/signals";
 
-import { ButtonComponent } from "../components/button";
-
-import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
+import { ButtonComponent } from "components";
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "models";
 
 
 @Component({

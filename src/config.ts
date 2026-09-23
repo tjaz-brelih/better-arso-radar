@@ -3,9 +3,8 @@ import { provideHttpClient } from '@angular/common/http';
 
 import { DEFAULT_DIALOG_CONFIG, DialogConfig } from '@angular/cdk/dialog';
 
-import { IconService } from './services/icon.service';
-import { DialogContainer } from './app/dialogs/dialog';
-import { ThemeService } from './services/theme.service';
+import { DialogContainer } from 'dialogs';
+import { IconService, ThemeService } from 'services';
 
 
 export const appConfig: ApplicationConfig = {

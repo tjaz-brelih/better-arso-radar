@@ -7,16 +7,11 @@ import { Dialog } from "@angular/cdk/dialog";
 
 import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "leaflet";
 
-import { SharedModule } from "../shared.module";
-import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
-import { PositionStorageService } from "../../services/position.storage";
-import { MarkerStorageService } from "../../services/marker.storage";
-import { MenuDirective } from "../components/menu";
-import { SliderComponent } from "../components/slider";
+import { SharedModule } from "shared";
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "models";
+import { MarkerDialogComponent, SettingsDialogComponent } from "dialogs";
+import { ArsoMeteoService, MarkerStorageService, PositionStorageService, RadarImage } from "services";
 
-import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
-import { SettingsDialogComponent } from "../dialogs/settings.dialog";
-import { MarkerDialogComponent } from "../dialogs/marker.dialog";
 import { MapContextMenuComponent } from "./context-menu";
 
 
@@ -29,7 +24,7 @@ type LayerRadarImage = {
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MenuDirective, SliderComponent, MapContextMenuComponent]
+  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MapContextMenuComponent]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 6, max: 14 };

@@ -2,7 +2,7 @@ import { inject, Service } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { forkJoin, map, mergeMap, Observable, of } from "rxjs";
 
-import { Coordinates } from "../models";
+import { Coordinates } from "models";
 import { environment } from "../environments/environment";
 
 

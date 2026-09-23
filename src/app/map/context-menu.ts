@@ -1,7 +1,7 @@
 import { Component, input } from "@angular/core";
 
-import { MenuDirective, MenuItemDirective } from "../components/menu";
-import { Marker } from "../../models";
+import { Marker } from "models";
+import { MenuDirective, MenuItemDirective } from "components";
 
 
 @Component({
