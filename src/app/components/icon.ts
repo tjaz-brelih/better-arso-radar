@@ -1,6 +1,6 @@
 import { Component, effect, ElementRef, inject, input, untracked } from "@angular/core";
 
-import { IconService } from "../../services/icon.service";
+import { IconService } from "services";
 
 
 @Component({

@@ -3,9 +3,8 @@ import { Component, inject, signal } from "@angular/core";
 import { Dialog, DIALOG_DATA, DialogRef } from "@angular/cdk/dialog";
 import { form, FormField } from "@angular/forms/signals";
 
-import { ButtonComponent } from "../components/button";
-
-import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
+import { ButtonComponent } from "components";
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "models";
 
 
 @Component({
@@ -30,7 +29,7 @@ import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
         <div class="flex gap-4 items-center px-1">
           @for (color of this.colors | keyvalue:null; track color.key) {
             <div
-              class="size-6 rounded-full cursor-pointer data-selected:outline-2 data-selected:outline-offset-2 data-selected:outline-color-text"
+              class="size-6 rounded-full cursor-pointer data-selected:outline-2 data-selected:outline-offset-2 data-selected:outline-color-primary"
               [style.background]="color.value"
               (click)="this.selectedColor.set(color.key)"
               [attr.data-selected]="this.selectedColor() === color.key ? '' : undefined">

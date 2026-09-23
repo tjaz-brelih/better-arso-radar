@@ -15,7 +15,7 @@ import { booleanAttribute, Component, computed, effect, ElementRef, input, model
       <div #parent class="relative h-1.5">
 
         <div [class.bg-color-disabled!]="this.disabled()" class="absolute h-full w-(--slider-position) rounded-full bg-color-primary"></div>
-        <div class="absolute h-full w-(--slider-remainder) left-(--slider-position) rounded-full bg-color-text"></div>
+        <div class="absolute h-full w-(--slider-remainder) left-(--slider-position) rounded-full bg-color-disabled"></div>
 
         <div class="absolute h-full w-[calc(100%-14px)] mx-[7px]">
           <button [disabled]="this.disabled()" class="absolute size-4 top-1/2 left-(--slider-position) -translate-y-1/2 -translate-x-1/2 cursor-pointer rounded-full bg-color-primary border border-color-text disabled:cursor-default disabled:bg-color-disabled"></button>

@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, Signal, signal, untracked, viewChild } from "@angular/core";
+import { Component, computed, effect, ElementRef, inject, signal, untracked, viewChild } from "@angular/core";
 import { DatePipe } from "@angular/common";
 import { Subscription, timer } from "rxjs";
 
@@ -7,16 +7,12 @@ import { Dialog } from "@angular/cdk/dialog";
 
 import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "leaflet";
 
-import { SharedModule } from "../shared.module";
-import { ArsoMeteoService, RadarImage } from "../../services/meteo-si.service";
-import { PositionStorageService } from "../../services/position.storage";
-import { MarkerStorageService } from "../../services/marker.storage";
-import { MenuDirective, MenuItemDirective } from "../components/menu";
-import { SliderComponent } from "../components/slider";
+import { SharedModule } from "shared";
+import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "models";
+import { MarkerDialogComponent, SettingsDialogComponent } from "dialogs";
+import { ArsoMeteoService, MarkerStorageService, PositionStorageService, RadarImage } from "services";
 
-import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../../models";
-import { SettingsDialogComponent } from "../dialogs/settings.dialog";
-import { MarkerDialogComponent } from "../dialogs/marker.dialog";
+import { MapContextMenuComponent } from "./context-menu";
 
 
 type LayerRadarImage = {
@@ -24,18 +20,11 @@ type LayerRadarImage = {
   radarImage: RadarImage;
 };
 
-type ContextMenuItem = {
-  text: string | (() => string);
-  visible?: Signal<boolean>;
-  disabled?: Signal<boolean>;
-  action: (event: PointerEvent) => void;
-};
-
 
 @Component({
   selector: "app-map",
   templateUrl: "./map.html",
-  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MenuDirective, MenuItemDirective, SliderComponent]
+  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MapContextMenuComponent]
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 6, max: 14 };
@@ -50,6 +39,7 @@ export class MapComponent {
   private readonly _map = computed(() => this.initializeMap(this._mapElement().nativeElement));
 
   public readonly isLoading = signal(false);
+  public readonly isSpinning = signal(false);
 
   public readonly radarImages = signal<LayerRadarImage[]>([]);
   public readonly currentRadarImage = signal<LayerRadarImage | undefined>(undefined);
@@ -64,80 +54,12 @@ export class MapComponent {
 
 
   public readonly contextMenuPosition = signal<PointerEvent | undefined>(undefined);
+  public readonly contextMenuMarker = computed(() => {
+    const position = this.contextMenuPosition();
+    if (!position) { return undefined; }
 
-  public readonly contextMenu: ContextMenuItem[] = [
-    {
-      text: () => {
-        const position = this.contextMenuPosition();
-        if (!position) { return ""; }
-
-        return this._getClosestMarker(position)?.marker.name!;
-      },
-      visible: computed(() => {
-        const position = this.contextMenuPosition();
-        if (!position) { return false; }
-
-        return !!(this._getClosestMarker(position)?.marker.name);
-      }),
-      disabled: computed(() => true),
-      action: () => { }
-    },
-    {
-      text: "Add marker...",
-      visible: computed(() => {
-        const position = this.contextMenuPosition();
-        if (!position) { return true; }
-
-        return !this._getClosestMarker(position);
-      }),
-      action: position => {
-        const point: Point = (this._map() as any).pointerEventToContainerPoint(position);
-        const latLng = this._map().containerPointToLatLng(point);
-
-        MarkerDialogComponent.open(this._dialog, { coordinates: [latLng.lat, latLng.lng] }).closed.subscribe(x => {
-          if (!x) { return; }
-
-          this._addMarker(x);
-        });
-      }
-    },
-
-    {
-      text: "Edit marker...",
-      visible: computed(() => {
-        const position = this.contextMenuPosition();
-        if (!position) { return false; }
-
-        return !!this._getClosestMarker(position!);
-      }),
-      action: position => {
-        const closestMarker = this._getClosestMarker(position);
-        if (!closestMarker) { return; }
-
-        MarkerDialogComponent.open(this._dialog, closestMarker.marker).closed.subscribe(x => {
-          if (!x) { return; }
-
-          this._updateMarker({ layer: closestMarker.layer, oldMarker: closestMarker.marker, marker: x });
-        });
-      }
-    },
-
-    {
-      text: "Remove marker",
-      visible: computed(() => {
-        const position = this.contextMenuPosition();
-        if (!position) { return false; }
-
-        return !!this._getClosestMarker(position!);
-      }),
-      action: position => {
-        const closestMarker = this._getClosestMarker(position);
-        if (!closestMarker) { return; }
-
-        this._removeMarker(closestMarker.layer, closestMarker.marker);
-      }
-    }
-  ];
+    return this._getClosestMarker(position)?.marker;
+  });
 
 
   public readonly slider = signal(0);
@@ -223,6 +145,31 @@ export class MapComponent {
     SettingsDialogComponent.open(this._dialog);
   }
 
+  public openMarkerDialog(marker?: Marker) {
+    const isEditing = !!marker;
+
+    if (!isEditing) {
+      const position = this.contextMenuPosition();
+      const point: Point = (this._map() as any).pointerEventToContainerPoint(position);
+      const latLng = this._map().containerPointToLatLng(point);
+
+      marker = { coordinates: [latLng.lat, latLng.lng] };
+    }
+
+    MarkerDialogComponent.open(this._dialog, marker!).closed.subscribe(x => {
+      if (!x) { return; }
+
+      if (!isEditing) {
+        this._addMarker(x);
+        return;
+      }
+
+      this._updateMarker({ oldMarker: marker!, marker: x });
+    });
+  }
+
+  public removeMarker(marker: Marker) { this._removeMarker(marker); }
+
 
   private _displayRadarImage(index?: number) {
     if (this.radarImages().length === 0) { return; }
@@ -235,6 +182,11 @@ export class MapComponent {
   }
 
 
+  public onSpinIteration() {
+    if (!this.isLoading()) { this.isSpinning.set(false); }
+  }
+
+
   public triggerTimer() {
     this._subscription?.unsubscribe();
     this._subscription = timer(0, 5 * 60 * 1000).subscribe(() => this._loadRadarImages());
@@ -243,6 +195,7 @@ export class MapComponent {
 
   private _loadRadarImages() {
     this.isLoading.set(true);
+    this.isSpinning.set(true);
 
     this._meteoService.getRadarImages().subscribe(({ removed, added }) => {
       this.isLoading.set(false);
@@ -273,7 +226,7 @@ export class MapComponent {
   private _removeRadarImages(images: RadarImage[]) {
     images.forEach(image => {
       const index = this.radarImages().findIndex(i => i.radarImage === image);
-      const removedImage = this.radarImages().splice(index, 1)[0];
+      const [removedImage] = this.radarImages().splice(index, 1);
 
       removedImage.layer.removeFrom(this._map());
     });
@@ -299,16 +252,16 @@ export class MapComponent {
     if (store) { this._markerStorage.addMarker(marker); }
   }
 
-  private _updateMarker(data: { layer: CircleMarker, oldMarker: Marker, marker: Marker }) {
-    this._removeMarker(data.layer, data.oldMarker);
+  private _updateMarker(data: { oldMarker: Marker, marker: Marker }) {
+    this._removeMarker(data.oldMarker);
     this._addMarker(data.marker);
   }
 
-  private _removeMarker(layer: CircleMarker, marker: Marker) {
-    const index = this._markerGroup.findIndex(i => i.layer === layer);
+  private _removeMarker(marker: Marker) {
+    const index = this._markerGroup.findIndex(i => i.marker === marker);
     if (index === -1) { return; }
 
-    this._markerLayerGroup.removeLayer(layer);
+    this._markerLayerGroup.removeLayer(this._markerGroup[index].layer);
     this._markerGroup.splice(index, 1);
 
     this._markerStorage.removeMarker(marker);

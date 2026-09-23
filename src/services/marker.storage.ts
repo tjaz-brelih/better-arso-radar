@@ -1,8 +1,7 @@
 import { Service } from "@angular/core";
 
 import { StorageService } from "./settings";
-import { Coordinates, DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "../models";
-
+import { Coordinates, DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "models";
 
 
 @Service()

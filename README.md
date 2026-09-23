@@ -8,7 +8,8 @@ Live page can be accessed [here](https://tjaz-brelih.github.io/better-arso-radar
 ## Features
 
 - Auto-refresh: Radar images are automatically refreshed every 5 minutes. Manual refresh is also available.
-- Custom markers: Custom markers can be placed on the map by using mouse right-click. Remove them by double-clicking.
+- Dark mode: By default the app follows your system preference. Optionally theme can be selected manually.
+- Custom markers: Place markers anywhere on the map. Choose from a number of predefined marker colors.
 - Scrubbing through images: Scrub through radar images by using the integrated slider.
 
 

@@ -1,4 +1,9 @@
-<div #map class="h-dvh" [cdkContextMenuTriggerFor]="contextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
+<div #map class="h-dvh" [cdkContextMenuTriggerFor]="mapContextMenu" (contextmenu)="$event.preventDefault(); this.contextMenuPosition.set($event);"></div>
+
+<ng-template #mapContextMenu>
+    <app-map-context-menu [marker]="this.contextMenuMarker()" [onEdit]="x => this.openMarkerDialog(x)" [onRemove]="x => this.removeMarker(x)" />
+</ng-template>
+
 
 
 <!-- Map controls -->
@@ -25,7 +30,7 @@
   <!-- Refresh -->
   <app-button-group>
     <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
-      <app-icon icon="arrow-path" />
+      <app-icon icon="arrow-path" [class.animate-(--animation-spin)]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
     </button>
   </app-button-group>
 
@@ -54,33 +59,6 @@
   <!-- Slider -->
   <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-6 w-xl max-w-[80%] transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-2xl">
     @let images = this.radarImages();
-    <app-slider [max]="images.length - 1" [(value)]="this.slider" [disabled]="images.length === 0" />
+    <app-slider [max]="images.length - 1" [(value)]="this.slider" />
   </div>
-  <!-- <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-6 w-xl max-w-[80%] transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-2xl">
-    <input type="range" [formField]="this.form.slider" step="1" list="markers" class="w-full not-disabled:cursor-pointer" />
-
-    <datalist id="markers">
-      @for (_ of this.radarImages(); track _.radarImage.date) {
-        <option [value]="$index"></option>
-      }
-    </datalist>
-  </div> -->
 }
-
-
-
-<ng-template #contextMenu>
-  <div appMenu>
-    @for (item of this.contextMenu; track item) {
-      @if (item.visible?.() ?? true) {
-        <button appMenuItem
-          (click)="item.action(this.contextMenuPosition()!)"
-          [disabled]="item.disabled?.() ?? false">
-
-          @if (typeof item.text === 'function') { {{ item.text() }} }
-          @else { {{ item.text }} }
-        </button>
-      }
-    }
-  </div>
-</ng-template>
