@@ -3,6 +3,15 @@ name: angular-github-pages
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Queue deployments instead of cancelling one that is already publishing.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
 
 env:
   page_subpath: /better-arso-radar/
@@ -20,14 +29,14 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v6
       with:
-        node-version: ^24.15.0
+        node-version-file: package.json
         cache: 'npm'
 
     - name: Install dependencies
       run: npm ci
 
     - name: Build
-      run: npm run build -- --base-href ${{ env.page_subpath }} --deploy-url ${{ env.page_subpath }} --configuration production
+      run: npm run build -- --base-href ${{ env.page_subpath }} --configuration production
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v5
