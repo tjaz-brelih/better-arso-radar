@@ -1,7 +1,7 @@
 :root {
-  --animate-spin2: spin2 .75s linear infinite;
+  --animation-spin: spin-half .5s linear infinite;
 }
 
-@keyframes spin2 {
+@keyframes spin-half {
   to { transform: rotate(180deg);}
 }

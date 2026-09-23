@@ -30,7 +30,7 @@
   <!-- Refresh -->
   <app-button-group>
     <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
-      <app-icon icon="arrow-path" [class.animate-(--animate-spin2)]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
+      <app-icon icon="arrow-path" [class.animate-(--animation-spin)]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
     </button>
   </app-button-group>
 
