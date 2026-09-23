@@ -224,7 +224,7 @@ export class MapComponent {
   private _removeRadarImages(images: RadarImage[]) {
     images.forEach(image => {
       const index = this.radarImages().findIndex(i => i.radarImage === image);
-      const removedImage = this.radarImages().splice(index, 1)[0];
+      const [removedImage] = this.radarImages().splice(index, 1);
 
       removedImage.layer.removeFrom(this._map());
     });

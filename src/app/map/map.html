@@ -30,7 +30,7 @@
   <!-- Refresh -->
   <app-button-group>
     <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
-      <app-icon icon="arrow-path" />
+      <app-icon icon="arrow-path" [class.animate-spin]="this.isLoading()" class="[animation-duration:2s]" />
     </button>
   </app-button-group>
 
@@ -59,6 +59,6 @@
   <!-- Slider -->
   <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-6 w-xl max-w-[80%] transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-2xl">
     @let images = this.radarImages();
-    <app-slider [max]="images.length - 1" [(value)]="this.slider" [disabled]="images.length === 0" />
+    <app-slider [max]="images.length - 1" [(value)]="this.slider" />
   </div>
 }
