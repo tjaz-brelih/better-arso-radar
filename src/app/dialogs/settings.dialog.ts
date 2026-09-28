@@ -1,7 +1,7 @@
 import { Component, effect, inject, signal, untracked } from "@angular/core";
 import { Dialog } from "@angular/cdk/dialog";
 
-import { ThemeService } from "services";
+import { SettingsService } from "services";
 import { ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirective } from "components";
 
 
@@ -17,7 +17,7 @@ import { ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirect
         <label>Theme</label>
 
         <app-button-group direction="horizontal">
-          <button appIconButton [active]="this.theme() === undefined" (click)="this.theme.set(undefined)" appTooltip="Follow system preference" location="bottom">
+          <button appIconButton [active]="this.theme() === 'auto'" (click)="this.theme.set('auto')" appTooltip="Follow system preference" location="bottom">
             <app-icon icon="sun-moon" />
           </button>
 
@@ -43,9 +43,9 @@ import { ButtonGroupDirective, IconButtonComponent, IconComponent, TooltipDirect
   `
 })
 export class SettingsDialogComponent {
-  private _themeService = inject(ThemeService);
+  private _settingsService = inject(SettingsService);
 
-  public theme = signal(this._themeService.get());
+  public theme = signal(this._settingsService.settings.theme);
 
 
 
@@ -54,8 +54,8 @@ export class SettingsDialogComponent {
       const theme = this.theme();
 
       untracked(() => {
-        this._themeService.save(theme);
-        this._themeService.setTheme();
+        this._settingsService.save({ theme });
+        this._settingsService.setTheme();
       });
     });
   }

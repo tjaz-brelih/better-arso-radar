@@ -4,7 +4,7 @@ export abstract class StorageService<T> {
 
   protected abstract default: T;
 
-  protected _get(): T {
+  protected _getFromStorage(): T {
     try {
       return <T>JSON.parse(this._storage.getItem(this._storageKey) ?? "");
     }
@@ -13,11 +13,7 @@ export abstract class StorageService<T> {
     }
   }
 
-  public get(): T {
-    return this._get() ?? this.default;
-  }
-
-  public save(value: T) {
+  protected _saveToStorage(value: T) {
     this._storage.setItem(this._storageKey, JSON.stringify(value));
   }
 }

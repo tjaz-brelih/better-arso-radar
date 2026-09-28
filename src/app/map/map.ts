@@ -10,7 +10,7 @@ import { CircleMarker, ImageOverlay, LayerGroup, Map, Point, TileLayer } from "l
 import { SharedModule } from "shared";
 import { DEFAULT_MARKER_COLOR, Marker, MARKER_COLORS } from "models";
 import { MarkerDialogComponent, SettingsDialogComponent } from "dialogs";
-import { ArsoMeteoService, MarkerStorageService, PositionStorageService, RadarImage } from "services";
+import { ArsoMeteoService, MarkerService, RadarImage, SettingsService } from "services";
 
 import { MapContextMenuComponent } from "./context-menu";
 
@@ -23,17 +23,21 @@ type LayerRadarImage = {
 
 @Component({
   selector: "app-map",
+  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MapContextMenuComponent],
   templateUrl: "./map.html",
-  imports: [SharedModule, DatePipe, CdkContextMenuTrigger, MapContextMenuComponent]
+  host: {
+    "[style.--radar-image-opacity]": "this.opacity()"
+  }
 })
 export class MapComponent {
   private readonly _zoomLimit = { min: 6, max: 14 };
+  private readonly _position = { center: [46.120, 14.815] as [number, number], zoom: 8 };
 
   private readonly _dialog = inject(Dialog);
 
   private readonly _meteoService = inject(ArsoMeteoService);
-  private readonly _markerStorage = inject(MarkerStorageService);
-  private readonly _positionStorage = inject(PositionStorageService);
+  private readonly _markerStorage = inject(MarkerService);
+  private readonly _settingsService = inject(SettingsService);
 
   private readonly _mapElement = viewChild.required<ElementRef<HTMLElement>>('map');
   private readonly _map = computed(() => this.initializeMap(this._mapElement().nativeElement));
@@ -62,6 +66,7 @@ export class MapComponent {
   });
 
 
+  public readonly opacity = signal(this._settingsService.settings.opacity);
   public readonly slider = signal(0);
 
 
@@ -77,6 +82,12 @@ export class MapComponent {
     });
 
     effect(() => {
+      const opacity = this.opacity();
+
+      untracked(() => this._settingsService.save({ opacity }));
+    });
+
+    effect(() => {
       const refreshedAt = this.refreshedAt();
       if (!refreshedAt) { return; }
 
@@ -89,8 +100,6 @@ export class MapComponent {
 
 
   private initializeMap(element: HTMLElement): Map {
-    const position = this._positionStorage.get();
-
     const map = new Map(element, {
       zoomControl: false,
 
@@ -101,8 +110,8 @@ export class MapComponent {
       zoomDelta: 0.5,
       wheelPxPerZoomLevel: 60 * 1.5,
 
-      center: position.center,
-      zoom: position.zoom
+      center: this._position.center,
+      zoom: this._position.zoom
     });
 
     this._markerStorage.getMarkers().forEach(marker => {
@@ -178,7 +187,7 @@ export class MapComponent {
 
     this.currentRadarImage()?.layer.setOpacity(0);
     this.currentRadarImage.set(image);
-    this.currentRadarImage()!.layer.setOpacity(1);
+    this.currentRadarImage()!.layer.setOpacity("revert-rule" as any); // Opacity rule is always present in the style of the image. Opacity is controlled via the class definition of the image, and 'revert-rule' restores it to the defined style.
   }
 
 
@@ -215,7 +224,7 @@ export class MapComponent {
     images.forEach(image => {
       const layer = new ImageOverlay(image.imageData, image.boundingBox, {
         attribution: '&copy; <a href="https://www.meteo.si">ARSO</a>',
-        className: "pixelated select-none dark:brightness-75",
+        className: "opacity-(--radar-image-opacity) pixelated select-none dark:brightness-75",
         opacity: 0,
       }).addTo(this._map());
 

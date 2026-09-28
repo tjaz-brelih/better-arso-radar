@@ -4,7 +4,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { DEFAULT_DIALOG_CONFIG, DialogConfig } from '@angular/cdk/dialog';
 
 import { DialogContainer } from 'dialogs';
-import { IconService, ThemeService } from 'services';
+import { IconService, SettingsService } from 'services';
 
 
 export const appConfig: ApplicationConfig = {
@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
 
     provideAppInitializer(() => inject(IconService).loadIconSet()),
-    provideAppInitializer(() => inject(ThemeService).setTheme()),
+    provideAppInitializer(() => inject(SettingsService).setTheme()),
 
     { provide: DEFAULT_DIALOG_CONFIG, useValue: { ...new DialogConfig(), container: DialogContainer, minWidth: "20rem" } satisfies DialogConfig }
   ]
