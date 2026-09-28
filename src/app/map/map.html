@@ -7,7 +7,7 @@
 
 
 <!-- Map controls -->
-<div class="absolute top-4 left-4 z-500 flex flex-col gap-4">
+<div class="absolute h-full p-4 top-0 left-0 z-500 flex flex-col gap-4 pointer-events-none *:pointer-events-auto">
 
   <!-- Zoom -->
   <app-button-group>
@@ -21,25 +21,24 @@
   </app-button-group>
 
   <!-- Geolocation -->
-  <app-button-group>
-    <button appIconButton (click)="this.setGeolocationMarker()" appTooltip="Add marker at your current location">
-      <app-icon icon="map-pin" />
-    </button>
-  </app-button-group>
+  <button appIconButton (click)="this.setGeolocationMarker()" appTooltip="Add marker at your current location">
+    <app-icon icon="map-pin" />
+  </button>
 
   <!-- Refresh -->
-  <app-button-group>
-    <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
-      <app-icon icon="arrow-path" [class.animate-(--animation-spin)]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
-    </button>
-  </app-button-group>
+  <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
+    <app-icon icon="arrow-path" [class.animate-(--animation-spin)]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
+  </button>
 
   <!-- Settings -->
-  <app-button-group>
-    <button appIconButton (click)="this.openSettingsDialog()" appTooltip="Settings">
-      <app-icon icon="cog" />
-    </button>
-  </app-button-group>
+  <button appIconButton (click)="this.openSettingsDialog()" appTooltip="Settings">
+    <app-icon icon="cog" />
+  </button>
+
+  <!-- Transparency -->
+  <div class="grow max-h-62 min-h-20 py-3 bg-color-background border border-color-border rounded-lg" appTooltip="Radar image opacity">
+    <app-slider vertical [(value)]="this.opacity" [max]="1" step="0.01" />
+  </div>
 
 </div>
 
