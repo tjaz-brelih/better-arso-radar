@@ -66,6 +66,8 @@ export class MapComponent {
   });
 
 
+  public readonly isOpacityOpen = signal(false);
+
   public readonly opacity = signal(this._settingsService.settings.opacity);
   public readonly slider = signal(0);
 
