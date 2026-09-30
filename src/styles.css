@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import './animations.css';
 
 :root {
   --color-primary: var(--color-blue-600);

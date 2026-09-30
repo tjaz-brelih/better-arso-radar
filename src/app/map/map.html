@@ -7,7 +7,7 @@
 
 
 <!-- Map controls -->
-<div class="absolute h-full p-4 top-0 left-0 z-500 flex flex-col gap-4 pointer-events-none *:pointer-events-auto">
+<div class="absolute h-full max-h-150 p-4 top-0 left-0 z-500 flex flex-col gap-4 pointer-events-none *:pointer-events-auto">
 
   <!-- Zoom -->
   <app-button-group>
@@ -27,7 +27,7 @@
 
   <!-- Refresh -->
   <button appIconButton (click)="this.triggerTimer()" [disabled]="this.isLoading()" appTooltip="Refresh radar images">
-    <app-icon icon="arrow-path" [class.animate-(--animation-spin)]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
+    <app-icon icon="arrow-path" [class.motion-safe:animate-spin-half]="this.isSpinning()" (animationiteration)="this.onSpinIteration()" />
   </button>
 
   <!-- Settings -->
@@ -35,17 +35,23 @@
     <app-icon icon="cog" />
   </button>
 
-  <!-- Transparency -->
-  <div class="grow max-h-62 min-h-20 py-3 bg-color-background border border-color-border rounded-lg" appTooltip="Radar image opacity">
-    <app-slider vertical [(value)]="this.opacity" [max]="1" step="0.01" />
-  </div>
+  <!-- Opacity -->
+  <button appIconButton (click)="this.isOpacityOpen.update(x => !x)" appTooltip="Toggle opacity control">
+    <app-icon icon="adjust-vertical" class="motion-safe:transition-[rotate]" [class.rotate-90]="this.isOpacityOpen()" />
+  </button>
+
+  @if (this.isOpacityOpen()) {
+    <div class="grow py-3 bg-color-background border border-color-border rounded-lg" appTooltip="Radar opacity" animate.enter="motion-safe:animate-flex-grow" animate.leave="motion-safe:animate-flex-shrink">
+      <app-slider vertical [(value)]="this.opacity" [max]="1" step="0.01" />
+    </div>
+  }
 
 </div>
 
 
 @if (this.currentRadarImage()?.radarImage?.date; as date) {
   <!-- Time information -->
-  <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 text-center bg-color-background border border-t-0 border-color-border rounded-b-lg">
+  <div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-56 z-500 text-center bg-color-background border border-t-0 border-color-border rounded-b-lg" animate.enter="motion-safe:animate-slide-in-top">
     <div class="py-0.5 font-mono text-xl">
       {{ date | date: 'd.MM.yyyy HH:mm' }}
     </div>
@@ -56,7 +62,7 @@
 
 
   <!-- Slider -->
-  <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-6 w-xl max-w-[80%] transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-2xl">
+  <div class="absolute bottom-0 left-1/2 px-4 pt-2 pb-6 w-xl max-w-[80%] transform -translate-x-1/2 z-500 bg-color-background border border-b-0 border-color-border rounded-t-2xl" animate.enter="motion-safe:animate-slide-in-bottom">
     @let images = this.radarImages();
     <app-slider [max]="images.length - 1" [(value)]="this.slider" />
   </div>
