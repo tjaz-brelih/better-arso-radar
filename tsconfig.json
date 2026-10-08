@@ -18,6 +18,7 @@
       "dialogs": ["./src/app/dialogs"],
       "services": ["./src/services"],
       "models": ["./src/app/models"],
+      "utility": ["./src/services/utility"],
       "shared": ["./src/app/shared.module"]
     }
   },

@@ -1,5 +1,6 @@
 @theme {
-  --slide-duration: .4s;
+  --flex-duration: .2s;
+  --slide-duration: 1s;
   --slide-timing-function: cubic-bezier(.11,.73,.41,.99);
 
 
@@ -16,13 +17,13 @@
   }
 
 
-  --animate-flex-grow: grow-flex var(--slide-duration) var(--slide-timing-function);
+  --animate-flex-grow: grow-flex var(--flex-duration) var(--slide-timing-function);
   @keyframes grow-flex {
     0% { flex-grow: 0; }
     25% { opacity: 1; }
   }
 
-  --animate-flex-shrink: shrink-flex var(--slide-duration) var(--slide-timing-function);
+  --animate-flex-shrink: shrink-flex var(--flex-duration) var(--slide-timing-function);
   @keyframes shrink-flex {
     50% { opacity: 1; }
     90% { opacity: 0; }
