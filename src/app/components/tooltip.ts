@@ -3,6 +3,8 @@ import { Component, Directive, ElementRef, inject, Injector, input, ViewContaine
 import { ComponentPortal } from "@angular/cdk/portal";
 import { ConnectedPosition, createFlexibleConnectedPositionStrategy, createOverlayRef, OverlayRef } from "@angular/cdk/overlay";
 
+import { isTouch } from "utility";
+
 
 type Direction = 'top' | 'bottom' | 'left' | 'right';
 
@@ -19,8 +21,9 @@ const directionToPosition: Record<Direction, ConnectedPosition> = {
 @Directive({
   selector: "[appTooltip]",
   host: {
-    "(mouseenter)": "this.showTooltip()",
-    "(mouseleave)": "this.hideTooltip()"
+    "(contextmenu)": "this.onContextMenu()",
+    "(mouseenter)": "this.onMouseEnter()",
+    "(mouseleave)": "this.onMouseLeave()"
   }
 })
 export class TooltipDirective {
@@ -36,7 +39,14 @@ export class TooltipDirective {
   private _tooltipInstance: TooltipComponent | null = null;
 
 
-  public showTooltip() {
+
+  protected onContextMenu() { if (isTouch) this.showTooltip(); }
+
+  protected onMouseEnter() { if (!isTouch) this.showTooltip(); }
+  protected onMouseLeave() { this.hideTooltip(); }
+
+
+  protected showTooltip() {
     this._overlayRef = this._createOverlay();
     this._portal = this._portal || new ComponentPortal(TooltipComponent, this._viewContainerRef);
 
@@ -44,7 +54,7 @@ export class TooltipDirective {
     this._tooltipInstance.text = this.text;
   }
 
-  public hideTooltip() {
+  protected hideTooltip() {
     this._overlayRef?.detach();
     this._tooltipInstance = null;
   }
